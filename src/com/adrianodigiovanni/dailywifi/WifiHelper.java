@@ -18,7 +18,10 @@ public class WifiHelper {
 		if (wifiManager.isWifiEnabled()) {
 			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 			String ssid = wifiInfo.getSSID();
-			if (null != ssid) {
+			int ipAddress = wifiInfo.getIpAddress();
+
+			if (null != ssid && 0 != ipAddress) {
+
 				final String[] projection = { AccountsTable.COLUMN_SSID };
 				final String selection = AccountsTable.COLUMN_SSID + "=?";
 				final String[] selectionArgs = { ssid };
