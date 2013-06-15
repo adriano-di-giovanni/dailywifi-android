@@ -60,7 +60,6 @@ public class AddEditAccountActivity extends Activity {
 		finish();
 	}
 
-	// TODO: Check if wifi is connected and ssid is in the list upon account insert or update in order to start service
 	public void onSave(View view) {
 
 		boolean hasErrors = false;
@@ -98,6 +97,8 @@ public class AddEditAccountActivity extends Activity {
 			} else {
 				getContentResolver().update(mUri, values, null, null);
 			}
+			
+			DWFService.startSelf(this);
 
 			finish();
 		}

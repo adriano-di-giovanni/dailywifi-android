@@ -13,8 +13,9 @@ public class WifiStateChangeReceiver extends BroadcastReceiver {
 		String intentAction = intent.getAction();
 
 		if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intentAction)) {
-			Intent serviceIntent = new Intent(context, DWFService.class);
-			context.startService(serviceIntent);
+//			Intent serviceIntent = new Intent(context, DWFService.class);
+//			context.startService(serviceIntent);
+			DWFService.startSelf(context);
 		}
 	}
 }
