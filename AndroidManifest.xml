@@ -45,7 +45,7 @@
             </intent-filter>
         </receiver>
         
-        <service android:name=".WifiAuthService" />
+        <service android:name=".DWFService" />
     </application>
 
 </manifest>
