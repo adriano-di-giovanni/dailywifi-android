@@ -23,6 +23,14 @@ public class DWFNetwork {
 	private static final String DEBUG_TAG = "DWFNetwork";
 
 	private static DWFNetwork mInstance;
+	
+	public enum State {
+		ACTIVE_WIFI_NETWORK_DETECTED,
+		ACCOUNT_FOUND,
+		ACTIVE_WIFI_NETWORK_IS_CAPTIVE,
+		CONNECTED,
+		CREDENTIALS_ARE_NOT_VALID
+	}
 
 	// used to detect captive networks
 	private static final URL TEST_URL;
@@ -84,8 +92,8 @@ public class DWFNetwork {
 	}
 
 	private class LoginTask extends
-			AsyncTask<OnLoginCompleteListener, Void, Boolean> {
-
+			AsyncTask<OnLoginCompleteListener, State, Boolean> {
+		
 		private OnLoginCompleteListener mListener = null;
 
 		@Override
@@ -98,14 +106,19 @@ public class DWFNetwork {
 			WifiInfo wifiInfo = getWifiInfo();
 
 			if (isConnected(wifiInfo)) {
-				Log.d(DEBUG_TAG, "Connected to WiFi network");
+//				Log.d(DEBUG_TAG, "Connected to WiFi network");
+				
+				publishProgress(State.ACTIVE_WIFI_NETWORK_DETECTED);
+				
 				Account account = Account.getBySSID(mContext,
 						wifiInfo.getSSID());
 
 				// account for network with that SSID must be in the database
 				if (null != account) {
-					Log.d(DEBUG_TAG,
-							"Account found for the active WiFi network");
+//					Log.d(DEBUG_TAG,
+//							"Account found for the active WiFi network");
+					
+					publishProgress(State.ACCOUNT_FOUND);
 
 					URL responseURL = HttpURLConnectionHelper
 							.getResponseURL(TEST_URL);
@@ -114,7 +127,9 @@ public class DWFNetwork {
 
 					// network must be captive
 					if (isCaptive) {
-						Log.d(DEBUG_TAG, "Active network is captive");
+//						Log.d(DEBUG_TAG, "Active network is captive");
+						
+						publishProgress(State.ACTIVE_WIFI_NETWORK_IS_CAPTIVE);
 
 						// TODO: check if network supports DWF API and set
 						// network compatibility accordingly
@@ -131,17 +146,19 @@ public class DWFNetwork {
 							// TODO: set network compatibility if responseCode
 							// is not 404
 
-							Log.d(DEBUG_TAG,
-									"Response code is: "
-											+ Integer.toString(responseCode));
+//							Log.d(DEBUG_TAG,
+//									"Response code is: "
+//											+ Integer.toString(responseCode));
 
 							switch (responseCode) {
 							case HttpsURLConnection.HTTP_OK:
+								publishProgress(State.CONNECTED);
 								// credentials are valid
 								account.setIsValid(true);
 								result = true;
 								break;
 							case HttpsURLConnection.HTTP_FORBIDDEN:
+								publishProgress(State.CREDENTIALS_ARE_NOT_VALID);
 								// credentials are not valid
 								account.setIsValid(false);
 							}
@@ -160,7 +177,7 @@ public class DWFNetwork {
 						// is logged in.
 						// TODO: Improve compatibility check when will be
 						// possible to request for introspection resources
-						if (!account.getIsCompatible()) {
+						if (null == account.getIsCompatible()) {
 							account.setIsCompatible(false);
 						}
 					}
@@ -170,7 +187,33 @@ public class DWFNetwork {
 
 			return Boolean.valueOf(result);
 		}
-
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+		
+		@Override
+		protected void onProgressUpdate(State... values) {
+			State state = values[0];
+			
+			switch (state) {
+			case ACTIVE_WIFI_NETWORK_DETECTED:
+				break;
+			case ACCOUNT_FOUND:
+				break;
+			case ACTIVE_WIFI_NETWORK_IS_CAPTIVE:
+				break;
+			case CONNECTED:
+				break;
+			case CREDENTIALS_ARE_NOT_VALID:
+				break;
+			}
+			
+			Log.d(DEBUG_TAG, state.toString());
+		}
+		
 		@Override
 		protected void onPostExecute(Boolean result) {
 			mListener.onLoginComplete(result.booleanValue());
