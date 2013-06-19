@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc" >
+
+    <target name="javadoc" >
+
+        <javadoc
+            access="public"
+            additionalparam="-bootclasspath /Users/adrianodigiovanni/Development/adt-bundle-mac-x86_64/sdk/platforms/android-17/android.jar"
+            author="true"
+            classpath="libs/android-support-v4.jar"
+            destdir="doc"
+            doctitle="DailyWiFi"
+            nodeprecated="false"
+            nodeprecatedlist="false"
+            noindex="false"
+            nonavbar="false"
+            notree="false"
+            packagenames="com.adrianodigiovanni.dailywifi,com.adrianodigiovanni.net"
+            source="1.6"
+            sourcepath="gen:src"
+            splitindex="true"
+            use="true"
+            version="true" >
+
+            <link href="file:/Users/adrianodigiovanni/Development/adt-bundle-mac-x86_64/sdk/docs/reference" />
+
+            <link href="file:/Users/adrianodigiovanni/Development/adt-bundle-mac-x86_64/workspace/DailyWiFi/doc/" />
+        </javadoc>
+    </target>
+
+</project>
