@@ -13,7 +13,7 @@ import android.util.Log;
  */
 public class Account {
 	private static final String DEBUG_TAG = "Account";
-	
+
 	private static final String[] mProjection = { AccountsTable.COLUMN_ID,
 			AccountsTable.COLUMN_SSID, AccountsTable.COLUMN_USERNAME,
 			AccountsTable.COLUMN_PASSWORD, AccountsTable.COLUMN_IS_COMPATIBLE,
@@ -31,17 +31,21 @@ public class Account {
 	/**
 	 * Gets the account by SSID
 	 * 
+	 * @param ssid
+	 *            The SSID to search for. Search ignores case.
 	 * @return The account matching SSID or null if any matches found
 	 */
 	public static Account getBySSID(Context context, String ssid) {
-		final String selection = AccountsTable.COLUMN_SSID + "=?";
+		final String selection = "UPPER(" + AccountsTable.COLUMN_SSID
+				+ ")=UPPER(?)";
 		final String[] selectionArgs = { ssid };
 
 		Cursor cursor = context.getContentResolver().query(
 				AccountsProvider.CONTENT_URI, mProjection, selection,
 				selectionArgs, null);
-		
-		Log.d(DEBUG_TAG, "Checking if an account exists for network with SSID " + ssid);
+
+		Log.d(DEBUG_TAG, "Checking if an account exists for network with SSID "
+				+ ssid);
 
 		return accountFromCursor(cursor);
 	}
@@ -55,8 +59,9 @@ public class Account {
 
 		Cursor cursor = context.getContentResolver().query(uri, mProjection,
 				null, null, null);
-		
-		Log.d(DEBUG_TAG, "Checking if an account exists by Uri " + uri.toString());
+
+		Log.d(DEBUG_TAG,
+				"Checking if an account exists by Uri " + uri.toString());
 
 		return accountFromCursor(cursor);
 	}
@@ -79,14 +84,14 @@ public class Account {
 					cursor.getInt(cursor
 							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_VALID)));
 			cursor.close();
-			
+
 			Log.d(DEBUG_TAG, "Account found: " + account.toString());
 		}
 		return account;
 	}
 
 	/**
-	 * Updates account in the database using URI to determine _ID. 
+	 * Updates account in the database using URI to determine _ID.
 	 * 
 	 * @see DWFService
 	 */
@@ -95,12 +100,12 @@ public class Account {
 
 		if (null == uri) {
 			Log.d(DEBUG_TAG, "Saving new account: " + account.toString());
-			
+
 			context.getContentResolver().insert(AccountsProvider.CONTENT_URI,
 					contentValues);
 		} else {
 			Log.d(DEBUG_TAG, "Updating account: " + account.toString());
-			
+
 			context.getContentResolver().update(uri, contentValues, null, null);
 		}
 	}
@@ -132,7 +137,7 @@ public class Account {
 		mPassword = password;
 		mIsCompatible = isCompatible;
 		mIsValid = isValid;
-		
+
 		Log.d(DEBUG_TAG, "Account created: " + toString());
 	}
 
@@ -224,7 +229,8 @@ public class Account {
 	public void save(Context context) {
 		Uri uri = null;
 		if (0 != mID) {
-			uri = Uri.withAppendedPath(AccountsProvider.CONTENT_ID_URI, Integer.toString(mID));
+			uri = Uri.withAppendedPath(AccountsProvider.CONTENT_ID_URI,
+					Integer.toString(mID));
 		}
 		Account.saveWithUri(context, uri, this);
 	}
@@ -234,11 +240,12 @@ public class Account {
 	 */
 	public void delete(Context context) {
 		if (0 != mID) {
-			Uri uri = Uri.withAppendedPath(AccountsProvider.CONTENT_ID_URI, Integer.toString(mID));
+			Uri uri = Uri.withAppendedPath(AccountsProvider.CONTENT_ID_URI,
+					Integer.toString(mID));
 			Account.deleteByUri(context, uri);
 		}
 	}
-	
+
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("{ ");
