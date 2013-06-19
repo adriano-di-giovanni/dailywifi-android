@@ -13,8 +13,14 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.util.Log;
 
+/**
+ * This class represents the WiFi network to connect to.
+ */
 public class DWFNetwork {
+
+	private static final String DEBUG_TAG = "DWFNetwork";
 
 	private static DWFNetwork mInstance;
 
@@ -69,6 +75,7 @@ public class DWFNetwork {
 				result = true;
 			}
 		}
+
 		return result;
 	}
 
@@ -91,33 +98,65 @@ public class DWFNetwork {
 			WifiInfo wifiInfo = getWifiInfo();
 
 			if (isConnected(wifiInfo)) {
-				URL responseURL = HttpURLConnectionHelper
-						.getResponseURL(TEST_URL);
-				boolean isCaptive = !responseURL.equals(TEST_URL);
-				if (isCaptive) {
-					// TODO: check if the network supports DWF API
+				Log.d(DEBUG_TAG, "Connected to WiFi network");
+				Account account = Account.getBySSID(mContext,
+						wifiInfo.getSSID());
 
-					Account account = Account.getBySSID(mContext,
-							wifiInfo.getSSID());
+				// account for network with that SSID must be in the database
+				if (null != account) {
+					Log.d(DEBUG_TAG,
+							"Account found for the active WiFi network");
 
-					URL loginURL = getLoginURL(responseURL, account);
+					URL responseURL = HttpURLConnectionHelper
+							.getResponseURL(TEST_URL);
 
-					HttpsURLConnection httpsURLConnection = null;
-					try {
-						httpsURLConnection = HttpsURLConnectionHelper
-								.connectTo(loginURL, "POST");
-						int responseCode = httpsURLConnection.getResponseCode();
+					boolean isCaptive = !responseURL.equals(TEST_URL);
 
-						if (HttpsURLConnection.HTTP_OK == responseCode) {
-							result = true;
+					// network must be captive
+					if (isCaptive) {
+						Log.d(DEBUG_TAG, "Active network is captive");
+
+						// TODO: check if network supports DWF API and set
+						// network compatibility accordingly
+
+						URL loginURL = getLoginURL(responseURL, account);
+
+						HttpsURLConnection httpsURLConnection = null;
+						try {
+							httpsURLConnection = HttpsURLConnectionHelper
+									.connectTo(loginURL, "POST");
+							int responseCode = httpsURLConnection
+									.getResponseCode();
+
+							// TODO: set network compatibility if responseCode
+							// is not 404
+
+							Log.d(DEBUG_TAG,
+									"Response code is: "
+											+ Integer.toString(responseCode));
+
+							switch (responseCode) {
+							case HttpsURLConnection.HTTP_OK:
+								// credentials are valid
+								account.setIsValid(true);
+								result = true;
+								break;
+							case HttpsURLConnection.HTTP_FORBIDDEN:
+								// credentials are not valid
+								account.setIsValid(false);
+							}
+
+						} catch (IOException e) {
+							// do nothing
+						} finally {
+							if (null != httpsURLConnection) {
+								httpsURLConnection.disconnect();
+							}
 						}
-					} catch (IOException e) {
-						// do nothing
-					} finally {
-						if (null != httpsURLConnection) {
-							httpsURLConnection.disconnect();
-						}
+					} else {
+						account.setIsCompatible(false);
 					}
+					account.save(mContext);
 				}
 			}
 

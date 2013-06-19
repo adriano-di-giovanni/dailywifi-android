@@ -83,6 +83,8 @@ public class AddEditAccountActivity extends Activity {
 			mAccount.setUsername(username);
 			mAccount.setPassword(password);
 			Account.saveWithUri(this, mUri, mAccount);
+			
+			DWFService.startSelf(this, DWFService.MODE_LOGIN);
 
 			finish();
 		}

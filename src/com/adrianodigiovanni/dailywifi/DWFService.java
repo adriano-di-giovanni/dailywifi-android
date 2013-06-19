@@ -7,35 +7,52 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class DWFService extends Service {
-	
+
 	private static final String DEBUG_TAG = "DWFService";
-	
-	public static void startSelf(Context context) {
-		Intent serviceIntent = new Intent(context, DWFService.class);
-		context.startService(serviceIntent);
+
+	private static final String EXTRA_MODE = "mode";
+	public static final String MODE_LOGIN = "login";
+	public static final String MODE_LOGOUT = "logout";
+
+	/**
+	 * Activities and receivers must call this static method to start the service 
+	 * 
+	 * @see WifiStateChangeReceiver
+	 * @see AddEditAccountActivity
+	 */
+	public static void startSelf(Context context, String mode) {
+		if (null != mode) {
+			Intent serviceIntent = new Intent(context, DWFService.class);
+			serviceIntent.putExtra(EXTRA_MODE, mode);
+			context.startService(serviceIntent);
+		}
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		
+
+		final String mode = intent.getStringExtra(EXTRA_MODE);
+
 		DWFNetwork dwfNetwork = DWFNetwork.getInstance(this);
-		
-		// TODO: logout on wifi disabled
-		
-		dwfNetwork.login(new DWFNetwork.OnLoginCompleteListener() {
+
+		if (mode.equals(MODE_LOGIN)) {
+			Log.d(DEBUG_TAG, "Service trying to login...");
 			
-			@Override
-			public void onLoginComplete(boolean success) {
-				Log.d(DEBUG_TAG, Boolean.toString(success));
-				stopSelf();
-			}
-		});
-		
+			dwfNetwork.login(new DWFNetwork.OnLoginCompleteListener() {
+
+				@Override
+				public void onLoginComplete(boolean success) {
+					Log.d(DEBUG_TAG, Boolean.toString(success));
+					stopSelf();
+				}
+			});
+		}
+
 		return START_STICKY;
 	}
 }
