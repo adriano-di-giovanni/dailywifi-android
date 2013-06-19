@@ -36,8 +36,8 @@ public class WifiStateChangeReceiver extends BroadcastReceiver {
 				break;
 			}
 			
-//			Log.d(DEBUG_TAG, "Service mode is: " + mode);
-			
+			Log.d(DEBUG_TAG, "Network state changed");
+						
 			DWFService.startSelf(context, mode);
 		}
 	}

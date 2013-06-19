@@ -154,7 +154,15 @@ public class DWFNetwork {
 							}
 						}
 					} else {
-						account.setIsCompatible(false);
+						// Compatibility is updated only if the network was not
+						// previously recognized as compatible. This is to avoid
+						// false positive when network is captive and the user
+						// is logged in.
+						// TODO: Improve compatibility check when will be
+						// possible to request for introspection resources
+						if (!account.getIsCompatible()) {
+							account.setIsCompatible(false);
+						}
 					}
 					account.save(mContext);
 				}
