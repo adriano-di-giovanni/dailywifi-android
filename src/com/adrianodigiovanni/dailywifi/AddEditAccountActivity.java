@@ -1,10 +1,8 @@
 package com.adrianodigiovanni.dailywifi;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +10,8 @@ import android.widget.EditText;
 
 public class AddEditAccountActivity extends Activity {
 
+	private Account mAccount = null;
+	
 	private EditText mEditTextSSID;
 	private EditText mEditTextUsername;
 	private EditText mEditTextPassword;
@@ -39,21 +39,11 @@ public class AddEditAccountActivity extends Activity {
 	}
 
 	private void fill(Uri uri) {
-		final String[] projection = { AccountsTable.COLUMN_SSID,
-				AccountsTable.COLUMN_USERNAME, AccountsTable.COLUMN_PASSWORD };
-		Cursor cursor = getContentResolver().query(uri, projection, null, null,
-				null);
-		if (null != cursor) {
-			cursor.moveToFirst();
-			mEditTextSSID.setText(cursor.getString(cursor
-					.getColumnIndexOrThrow(AccountsTable.COLUMN_SSID)));
-			mEditTextUsername.setText(cursor.getString(cursor
-					.getColumnIndexOrThrow(AccountsTable.COLUMN_USERNAME)));
-			mEditTextPassword.setText(cursor.getString(cursor
-					.getColumnIndexOrThrow(AccountsTable.COLUMN_PASSWORD)));
-
-			cursor.close();
-		}
+		mAccount = Account.fetch(this, uri);
+		
+		mEditTextSSID.setText(mAccount.getSSID());
+		mEditTextUsername.setText(mAccount.getUsername());
+		mEditTextPassword.setText(mAccount.getPassword());
 	}
 
 	public void onCancel(View view) {
@@ -86,19 +76,13 @@ public class AddEditAccountActivity extends Activity {
 		}
 
 		if (!hasErrors) {
-			ContentValues values = new ContentValues();
-			values.put(AccountsTable.COLUMN_SSID, ssid);
-			values.put(AccountsTable.COLUMN_USERNAME, username);
-			values.put(AccountsTable.COLUMN_PASSWORD, password);
-
-			if (null == mUri) {
-				getContentResolver().insert(AccountsProvider.CONTENT_URI,
-						values);
-			} else {
-				getContentResolver().update(mUri, values, null, null);
+			if (null == mAccount) {
+				mAccount = new Account();
 			}
-			
-			DWFService.startSelf(this);
+			mAccount.setSSID(ssid);
+			mAccount.setUsername(username);
+			mAccount.setPassword(password);
+			Account.save(this, mUri, mAccount);
 
 			finish();
 		}
@@ -106,7 +90,7 @@ public class AddEditAccountActivity extends Activity {
 
 	// TODO: Implement undo
 	public void onRemove(View view) {
-		getContentResolver().delete(mUri, null, null);
+		Account.delete(this, mUri);
 		finish();
 	}
 }

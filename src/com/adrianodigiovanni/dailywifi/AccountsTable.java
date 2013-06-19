@@ -13,17 +13,17 @@ public class AccountsTable {
 	 * The name for the primary key column
 	 */
 	public static final String COLUMN_ID = "_id";
-	
+
 	/**
 	 * The name for the column indicating the WiFi network's SSID
 	 */
 	public static final String COLUMN_SSID = "ssid";
-	
+
 	/**
 	 * The name for the column indicating the account username
 	 */
 	public static final String COLUMN_USERNAME = "username";
-	
+
 	/**
 	 * The name for the column indicating the account password
 	 */
@@ -80,9 +80,10 @@ public class AccountsTable {
 	private static final String TABLE_CREATE_SQL = "CREATE TABLE " + TABLE_NAME
 			+ " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 			+ COLUMN_SSID + " TEXT NOT NULL, " + COLUMN_USERNAME
-			+ " TEXT NOT NULL, " + COLUMN_PASSWORD + " TEXT NOT NULL"
-			+ COLUMN_IS_COMPATIBLE + " INTEGER NOT NULL DEFAULT -1"
-			+ COLUMN_IS_ACCOUNT_VALID + " INTEGER NOT NULL DEFAULT -1" + ");";
+			+ " TEXT NOT NULL, " + COLUMN_PASSWORD + " TEXT NOT NULL, "
+			+ COLUMN_IS_COMPATIBLE + " INTEGER NOT NULL DEFAULT "
+			+ TRISTATE_NOT_APPLICABLE + ", " + COLUMN_IS_ACCOUNT_VALID
+			+ " INTEGER NOT NULL DEFAULT " + TRISTATE_NOT_APPLICABLE + ");";
 
 	private static final String TABLE_DROP_SQL = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
@@ -96,7 +97,7 @@ public class AccountsTable {
 
 	// TODO: copy data from old table to new table
 	/**
-	 * @see AccountsDatabaseHelper#onUpgrade(SQLiteDatabase, int, int) 
+	 * @see AccountsDatabaseHelper#onUpgrade(SQLiteDatabase, int, int)
 	 */
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion,
 			int newVersion) {

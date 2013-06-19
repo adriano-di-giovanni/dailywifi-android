@@ -14,14 +14,27 @@ public class AccountsDatabaseHelper extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 1;
 
 	public AccountsDatabaseHelper(Context context) {
-		super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
+		super(context.getApplicationContext(), DATABASE_NAME, null,
+				DATABASE_VERSION);
 	}
 
+	/**
+	 * Invoked when database does not exist. The method delegates creation to
+	 * homologous methods in table classes
+	 * 
+	 * @see AccountsTable
+	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		AccountsTable.onCreate(db);
 	}
 
+	/**
+	 * Invoked when database version changes. The method delegates upgrade to
+	 * homologous methods in table classes
+	 * 
+	 * @see AccountsTable
+	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		AccountsTable.onUpgrade(db, oldVersion, newVersion);
