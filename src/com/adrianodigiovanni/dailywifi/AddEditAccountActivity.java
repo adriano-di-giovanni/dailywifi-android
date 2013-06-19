@@ -39,7 +39,7 @@ public class AddEditAccountActivity extends Activity {
 	}
 
 	private void fill(Uri uri) {
-		mAccount = Account.fetch(this, uri);
+		mAccount = Account.getByUri(this, uri);
 		
 		mEditTextSSID.setText(mAccount.getSSID());
 		mEditTextUsername.setText(mAccount.getUsername());
@@ -82,7 +82,7 @@ public class AddEditAccountActivity extends Activity {
 			mAccount.setSSID(ssid);
 			mAccount.setUsername(username);
 			mAccount.setPassword(password);
-			Account.save(this, mUri, mAccount);
+			Account.saveWithUri(this, mUri, mAccount);
 
 			finish();
 		}
@@ -90,7 +90,7 @@ public class AddEditAccountActivity extends Activity {
 
 	// TODO: Implement undo
 	public void onRemove(View view) {
-		Account.delete(this, mUri);
+		Account.deleteByUri(this, mUri);
 		finish();
 	}
 }

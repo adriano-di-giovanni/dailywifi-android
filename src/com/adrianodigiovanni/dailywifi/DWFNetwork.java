@@ -78,7 +78,7 @@ public class DWFNetwork {
 
 	private class LoginTask extends
 			AsyncTask<OnLoginCompleteListener, Void, Boolean> {
-		
+
 		private OnLoginCompleteListener mListener = null;
 
 		@Override
@@ -97,7 +97,7 @@ public class DWFNetwork {
 				if (isCaptive) {
 					// TODO: check if the network supports DWF API
 
-					Account account = AccountsHelper.getAccountBySSID(mContext,
+					Account account = Account.getBySSID(mContext,
 							wifiInfo.getSSID());
 
 					URL loginURL = getLoginURL(responseURL, account);
@@ -107,7 +107,7 @@ public class DWFNetwork {
 						httpsURLConnection = HttpsURLConnectionHelper
 								.connectTo(loginURL, "POST");
 						int responseCode = httpsURLConnection.getResponseCode();
-						
+
 						if (HttpsURLConnection.HTTP_OK == responseCode) {
 							result = true;
 						}
@@ -133,8 +133,9 @@ public class DWFNetwork {
 			URL url = null;
 			try {
 				url = new URL(baseURL.getProtocol(), baseURL.getHost(), 8081,
-						"api/v1/account/login?username=" + account.getUsername()
-								+ "&password=" + account.getPassword());
+						"api/v1/account/login?username="
+								+ account.getUsername() + "&password="
+								+ account.getPassword());
 			} catch (MalformedURLException e) {
 				// do nothing
 			}
