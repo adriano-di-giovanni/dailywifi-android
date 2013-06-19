@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-/* 
- * TODO: Implement a contract class
- * @see http://developer.android.com/guide/topics/providers/content-provider-creating.html#ContractClass
+/**
+ * This class is the content provider for the app. Accounts in the SQLite
+ * database can be accessed used this class only.
  */
 public class AccountsProvider extends ContentProvider {
 
