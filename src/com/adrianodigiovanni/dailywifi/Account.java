@@ -1,18 +1,20 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.database.AccountsTable;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 /**
- * This class represents a WiFi network account.
+ * This class represents a WiFi network account input by the user.
  */
 public class Account {
 	private static final String[] mProjection = { AccountsTable.COLUMN_ID,
 			AccountsTable.COLUMN_SSID, AccountsTable.COLUMN_USERNAME,
 			AccountsTable.COLUMN_PASSWORD, AccountsTable.COLUMN_IS_COMPATIBLE,
-			AccountsTable.COLUMN_IS_ACCOUNT_VALID };
+			AccountsTable.COLUMN_IS_VALID };
 
 	@SuppressWarnings("unused")
 	private int mID;
@@ -36,8 +38,8 @@ public class Account {
 		Cursor cursor = context.getContentResolver().query(
 				AccountsProvider.CONTENT_URI, mProjection, selection,
 				selectionArgs, null);
-		
-		return accountFromCursor(cursor); 
+
+		return accountFromCursor(cursor);
 	}
 
 	/**
@@ -50,10 +52,9 @@ public class Account {
 		Cursor cursor = context.getContentResolver().query(uri, mProjection,
 				null, null, null);
 
-
 		return accountFromCursor(cursor);
 	}
-	
+
 	private static Account accountFromCursor(Cursor cursor) {
 		Account account = null;
 		if (null != cursor) {
@@ -70,7 +71,7 @@ public class Account {
 					cursor.getInt(cursor
 							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_COMPATIBLE)),
 					cursor.getInt(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_ACCOUNT_VALID)));
+							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_VALID)));
 			cursor.close();
 		}
 		return account;
@@ -131,7 +132,13 @@ public class Account {
 		return mSSID;
 	}
 
+	/**
+	 * Sets SSID for the account. It also resets info about network
+	 * compatibility with DailyWiFi protocol and credentials validity.
+	 */
 	public void setSSID(String ssid) {
+		if (ssid.equals(mSSID))
+			resetTriStateMembers();
 		mSSID = ssid;
 	}
 
@@ -139,15 +146,27 @@ public class Account {
 		return mUsername;
 	}
 
+	/**
+	 * Sets username for the account. It also resets info about network
+	 * compatibility with DailyWiFi protocol and credentials validity.
+	 */
 	public void setUsername(String username) {
+		if (username.equals(mUsername))
+			resetTriStateMembers();
 		mUsername = username;
 	}
 
 	public String getPassword() {
 		return mPassword;
 	}
-
+	
+	/**
+	 * Sets password for the account. It also resets info about network
+	 * compatibility with DailyWiFi protocol and credentials validity.
+	 */
 	public void setPassword(String password) {
+		if (password.equals(mPassword))
+			resetTriStateMembers();
 		mPassword = password;
 	}
 
@@ -174,8 +193,8 @@ public class Account {
 	/**
 	 * Sets WiFi compatibility with DailyWiFi protocol.
 	 * 
-	 * @param A
-	 *            boolean primitive value to indicate compatibility.
+	 * @param value
+	 *            A boolean primitive value to indicate compatibility.
 	 */
 	public void setIsCompatible(boolean value) {
 		mIsCompatible = toTriState(value);
@@ -184,19 +203,24 @@ public class Account {
 	/**
 	 * Sets account credentials validity
 	 * 
-	 * @param A
-	 *            boolean primitive value to indicate credentials validity.
+	 * @param value
+	 *            A boolean primitive value to indicate credentials validity.
 	 */
 	public void setIsValid(boolean value) {
 		mIsValid = toTriState(value);
 	}
 
-	private int toTriState(boolean fromBoolean) {
+	private static int toTriState(boolean fromBoolean) {
 		return (fromBoolean) ? AccountsTable.TRISTATE_TRUE
 				: AccountsTable.TRISTATE_FALSE;
 	}
 
-	private Boolean getBoolean(int fromTriState) {
+	private void resetTriStateMembers() {
+		mIsCompatible = AccountsTable.TRISTATE_NOT_APPLICABLE;
+		mIsValid = AccountsTable.TRISTATE_NOT_APPLICABLE;
+	}
+
+	private static Boolean getBoolean(int fromTriState) {
 		Boolean is = null;
 		if (AccountsTable.TRISTATE_TRUE == fromTriState) {
 			is = Boolean.TRUE;

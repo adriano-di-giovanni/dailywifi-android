@@ -1,5 +1,8 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.database.AccountsDatabaseHelper;
+import com.adrianodigiovanni.dailywifi.database.AccountsTable;
+
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;

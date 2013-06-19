@@ -1,5 +1,7 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.database.AccountsTable;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
