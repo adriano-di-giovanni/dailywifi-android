@@ -18,11 +18,11 @@ import android.util.Log;
 /**
  * This class represents the WiFi network to connect to.
  */
-public class DWFNetwork {
+public class DWFAttempt {
 
 	private static final String DEBUG_TAG = "DWFNetwork";
 
-	private static DWFNetwork mInstance;
+	private static DWFAttempt mInstance;
 
 	private enum AccountOperation {
 		LOGIN, LOGOUT
@@ -49,14 +49,14 @@ public class DWFNetwork {
 	/**
 	 * Gets the singleton instance
 	 */
-	public static DWFNetwork getInstance(Context context) {
+	public static DWFAttempt getInstance(Context context) {
 		if (null == mInstance) {
-			mInstance = new DWFNetwork(context);
+			mInstance = new DWFAttempt(context);
 		}
 		return mInstance;
 	}
 
-	private DWFNetwork(Context context) {
+	private DWFAttempt(Context context) {
 		mContext = context.getApplicationContext();
 	}
 

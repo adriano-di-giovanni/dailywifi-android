@@ -40,12 +40,12 @@ public class DWFService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		final String mode = intent.getStringExtra(EXTRA_MODE);
 
-		DWFNetwork dwfNetwork = DWFNetwork.getInstance(this);
+		DWFAttempt dwfNetwork = DWFAttempt.getInstance(this);
 
 		if (mode.equals(MODE_LOGIN)) {
 			Log.d(DEBUG_TAG, "Service trying to login...");
 			
-			dwfNetwork.login(new DWFNetwork.OnCompleteListener() {
+			dwfNetwork.login(new DWFAttempt.OnCompleteListener() {
 				
 				@Override
 				public void onComplete(boolean success) {
