@@ -13,9 +13,12 @@ import com.adrianodigiovanni.net.HttpsURLConnectionHelper;
 
 import android.net.wifi.WifiInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class ActionTask extends
 		AsyncTask<ActionTaskParams, ActionProgress, Boolean> {
+
+	private static final String DEBUG_TAG = "ActionTask";
 
 	private static final URL TEST_URL;
 	static {
@@ -27,7 +30,7 @@ public class ActionTask extends
 		}
 		TEST_URL = url;
 	}
-	
+
 	private ActionTaskParams mParams;
 
 	@Override
@@ -54,21 +57,22 @@ public class ActionTask extends
 				URL responseURL = HttpURLConnectionHelper
 						.getResponseURL(TEST_URL);
 
-				boolean isCaptiveOrLoggedOut = !responseURL
-						.equals(TEST_URL);
+				boolean isCaptiveOrLoggedOut = !responseURL.equals(TEST_URL);
+
+				URL url;
+				HttpsURLConnection httpsURLConnection = null;
 
 				if (isCaptiveOrLoggedOut) {
 
-					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_OR_LOGGED_OUT);
+					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
 
 					if (ActionType.LOGIN == mParams.getActionType()) {
 
-						URL loginURL = getLoginURL(responseURL, account);
+						url = getLoginURL(responseURL, account);
 
-						HttpsURLConnection httpsURLConnection = null;
 						try {
 							httpsURLConnection = HttpsURLConnectionHelper
-									.connectTo(loginURL, "POST");
+									.connectTo(url, "POST");
 							int responseCode = httpsURLConnection
 									.getResponseCode();
 
@@ -102,27 +106,27 @@ public class ActionTask extends
 						}
 					}
 				} else {
+					// TODO: logout. You do not have the URL to logout. So, you
+					// have to keep note of the URL in the database
 
-					if (ActionType.LOGOUT == mParams.getActionType()) {
-						// check if network is captive and DailyWiFi
-						// compatible to logout
-					}
+					// TODO: Toast notification if action is login but network
+					// is not captive or user is logged in
 				}
 
 				account.save(mParams.getContext());
 			}
-			
+
 		}
 
-			return Boolean.valueOf(result);
+		return Boolean.valueOf(result);
 	}
-	
+
 	@Override
 	protected void onProgressUpdate(ActionProgress... values) {
 		Toaster toaster = Toaster.getInstance(mParams.getContext());
 		toaster.showToast(values[0].toString());
 	}
-	
+
 	@Override
 	protected void onPostExecute(Boolean result) {
 		mParams.getListener().onComplete(result.booleanValue());
@@ -132,9 +136,19 @@ public class ActionTask extends
 		URL url = null;
 		try {
 			url = new URL(baseURL.getProtocol(), baseURL.getHost(), 8081,
-					"api/v1/account/login?username="
-							+ account.getUsername() + "&password="
-							+ account.getPassword());
+					"api/v1/account/login?username=" + account.getUsername()
+							+ "&password=" + account.getPassword());
+		} catch (MalformedURLException e) {
+			// do nothing
+		}
+		return url;
+	}
+
+	private static URL getLogoutURL(URL baseURL, Account account) {
+		URL url = null;
+		try {
+			url = new URL(baseURL.getProtocol(), baseURL.getHost(), 8081,
+					"api/v1/account/logout?username=" + account.getUsername());
 		} catch (MalformedURLException e) {
 			// do nothing
 		}

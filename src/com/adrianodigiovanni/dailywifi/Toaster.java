@@ -62,7 +62,6 @@ public class Toaster {
 	 */
 	public void showToast(CharSequence text) {
 		Log.d(DEBUG_TAG, (String) text);
-//		mToast.cancel();
 		mTextView.setText(text);
 		mToast.show();
 	}
