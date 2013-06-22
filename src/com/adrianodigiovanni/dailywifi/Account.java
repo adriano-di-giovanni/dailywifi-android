@@ -93,7 +93,7 @@ public class Account {
 	/**
 	 * Updates account in the database using URI to determine _ID.
 	 * 
-	 * @see DWFService
+	 * @see BackgroundService
 	 */
 	public static void saveWithUri(Context context, Uri uri, Account account) {
 		ContentValues contentValues = account.getContentValues();

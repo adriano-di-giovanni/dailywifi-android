@@ -86,7 +86,7 @@ public class AddEditAccountActivity extends Activity {
 			mAccount.setPassword(password);
 			Account.saveWithUri(this, mUri, mAccount);
 			
-			DWFService.startSelf(this, ActionType.LOGIN);
+			BackgroundService.startSelf(this, ActionType.LOGIN);
 
 			finish();
 		}

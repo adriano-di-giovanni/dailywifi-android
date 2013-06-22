@@ -9,10 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-/**
- * Background service 
- */
-public class DWFService extends Service {
+public class BackgroundService extends Service {
 
 	private static final String EXTRA_ACTION_TYPE = "actionType";
 
@@ -24,7 +21,7 @@ public class DWFService extends Service {
 	 */
 	public static void startSelf(Context context, ActionType actionType) {
 		if (null != actionType) {
-			Intent serviceIntent = new Intent(context.getApplicationContext(), DWFService.class);
+			Intent serviceIntent = new Intent(context.getApplicationContext(), BackgroundService.class);
 			serviceIntent.putExtra(EXTRA_ACTION_TYPE, actionType);
 			context.startService(serviceIntent);
 		}

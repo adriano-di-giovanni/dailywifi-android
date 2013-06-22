@@ -45,7 +45,7 @@
             </intent-filter>
         </receiver>
         
-        <service android:name=".DWFService" />
+        <service android:name=".BackgroundService" />
     </application>
 
 </manifest>
