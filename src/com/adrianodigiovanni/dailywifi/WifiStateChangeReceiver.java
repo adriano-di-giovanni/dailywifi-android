@@ -1,5 +1,7 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.attempt.ActionType;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,20 +27,20 @@ public class WifiStateChangeReceiver extends BroadcastReceiver {
 			NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 			NetworkInfo.State networkState = networkInfo.getState();
 			
-			String mode = null;
+			ActionType actionType = null;
 			
 			switch (networkState) {
 			case CONNECTED:
-				mode = DWFService.MODE_LOGIN;
+				actionType = ActionType.LOGIN;
 				break;
 			case DISCONNECTING:
-				mode = DWFService.MODE_LOGOUT;
+				actionType = ActionType.LOGOUT;
 				break;
 			}
 			
 			Log.d(DEBUG_TAG, "Network state changed");
 						
-			DWFService.startSelf(context, mode);
+			DWFService.startSelf(context, actionType);
 		}
 	}
 }

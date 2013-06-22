@@ -1,21 +1,20 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.attempt.ActionType;
+import com.adrianodigiovanni.dailywifi.attempt.Attempt;
+import com.adrianodigiovanni.dailywifi.attempt.OnCompleteListener;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * Background service 
  */
 public class DWFService extends Service {
 
-	private static final String DEBUG_TAG = "DWFService";
-
-	private static final String EXTRA_MODE = "mode";
-	public static final String MODE_LOGIN = "login";
-	public static final String MODE_LOGOUT = "logout";
+	private static final String EXTRA_ACTION_TYPE = "actionType";
 
 	/**
 	 * Activities and receivers must call this static method to start the service 
@@ -23,10 +22,10 @@ public class DWFService extends Service {
 	 * @see WifiStateChangeReceiver
 	 * @see AddEditAccountActivity
 	 */
-	public static void startSelf(Context context, String mode) {
-		if (null != mode) {
+	public static void startSelf(Context context, ActionType actionType) {
+		if (null != actionType) {
 			Intent serviceIntent = new Intent(context.getApplicationContext(), DWFService.class);
-			serviceIntent.putExtra(EXTRA_MODE, mode);
+			serviceIntent.putExtra(EXTRA_ACTION_TYPE, actionType);
 			context.startService(serviceIntent);
 		}
 	}
@@ -38,22 +37,16 @@ public class DWFService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		final String mode = intent.getStringExtra(EXTRA_MODE);
-
-		DWFAttempt dwfNetwork = DWFAttempt.getInstance(this);
-
-		if (mode.equals(MODE_LOGIN)) {
-			Log.d(DEBUG_TAG, "Service trying to login...");
+		final ActionType actionType = (ActionType) intent.getSerializableExtra(EXTRA_ACTION_TYPE);
+		
+		Attempt attempt = Attempt.getInstance(this);
+		attempt.tryAction(actionType, new OnCompleteListener() {
 			
-			dwfNetwork.login(new DWFAttempt.OnCompleteListener() {
-				
-				@Override
-				public void onComplete(boolean success) {
-					Log.d(DEBUG_TAG, Boolean.toString(success));
-					stopSelf();
-				}
-			});			
-		}
+			@Override
+			public void onComplete(boolean result) {
+				stopSelf();
+			}
+		});
 
 		return START_STICKY;
 	}

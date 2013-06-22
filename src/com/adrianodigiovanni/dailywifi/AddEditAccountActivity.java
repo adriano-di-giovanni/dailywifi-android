@@ -1,5 +1,7 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.dailywifi.attempt.ActionType;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -84,7 +86,7 @@ public class AddEditAccountActivity extends Activity {
 			mAccount.setPassword(password);
 			Account.saveWithUri(this, mUri, mAccount);
 			
-			DWFService.startSelf(this, DWFService.MODE_LOGIN);
+			DWFService.startSelf(this, ActionType.LOGIN);
 
 			finish();
 		}
