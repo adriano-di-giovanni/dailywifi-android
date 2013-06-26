@@ -57,22 +57,24 @@ public class ActionTask extends
 				URL responseURL = HttpURLConnectionHelper
 						.getResponseURL(TEST_URL);
 
-				boolean isCaptiveOrLoggedOut = !responseURL.equals(TEST_URL);
+				boolean isCaptiveAndLoggedOut = !responseURL.equals(TEST_URL);
 
-				URL url;
+				URL baseURL;
+				URL actionTaskURL;
 				HttpsURLConnection httpsURLConnection = null;
 
-				if (isCaptiveOrLoggedOut) {
+				if (isCaptiveAndLoggedOut) {
 
 					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
 
 					if (ActionType.LOGIN == mParams.getActionType()) {
 
-						url = getLoginURL(responseURL, account);
+						baseURL = getBaseURL(responseURL);
+						actionTaskURL = getLoginURL(baseURL, account);
 
 						try {
 							httpsURLConnection = HttpsURLConnectionHelper
-									.connectTo(url, "POST");
+									.connectTo(actionTaskURL, "POST");
 							int responseCode = httpsURLConnection
 									.getResponseCode();
 
@@ -89,6 +91,7 @@ public class ActionTask extends
 								publishProgress(ActionProgress.LOGGED_IN);
 								// credentials are valid
 								account.setIsValid(true);
+								account.setRedirectURL(baseURL);
 								result = true;
 								break;
 							case HttpsURLConnection.HTTP_FORBIDDEN:
@@ -132,12 +135,32 @@ public class ActionTask extends
 		mParams.getListener().onComplete(result.booleanValue());
 	}
 
+	// TODO: DailyWiFi API. Immutable endpoint with base URL context. Resource
+	// is a json object containing info about login URL, logout URL. If I
+	// understand well, redirect URL has https protocol. This resolves
+	// certificate problems because the authentication takes place while
+	// accessing that resource.
+	private static URL getBaseURL(URL url) {
+		Log.d(DEBUG_TAG, "URL: " + url.toString());
+		URL baseURL = null;
+		try {
+			baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(),
+					"");
+		} catch (MalformedURLException e) {
+			// do nothing
+		}
+
+		Log.d(DEBUG_TAG, "Base URL: " + baseURL.toString());
+		return baseURL;
+	}
+
 	private static URL getLoginURL(URL baseURL, Account account) {
 		URL url = null;
 		try {
-			url = new URL(baseURL.getProtocol(), baseURL.getHost(), 8081,
-					"api/v1/account/login?username=" + account.getUsername()
-							+ "&password=" + account.getPassword());
+			url = new URL(baseURL.getProtocol(), baseURL.getHost(),
+					baseURL.getPort(), "api/v1/account/login?username="
+							+ account.getUsername() + "&password="
+							+ account.getPassword());
 		} catch (MalformedURLException e) {
 			// do nothing
 		}
@@ -147,8 +170,9 @@ public class ActionTask extends
 	private static URL getLogoutURL(URL baseURL, Account account) {
 		URL url = null;
 		try {
-			url = new URL(baseURL.getProtocol(), baseURL.getHost(), 8081,
-					"api/v1/account/logout?username=" + account.getUsername());
+			url = new URL(baseURL.getProtocol(), baseURL.getHost(),
+					baseURL.getPort(), "api/v1/account/logout?username="
+							+ account.getUsername());
 		} catch (MalformedURLException e) {
 			// do nothing
 		}

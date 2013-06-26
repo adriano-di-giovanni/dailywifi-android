@@ -40,12 +40,18 @@ public class AccountsTable {
 	 */
 	public static final String COLUMN_IS_VALID = "isValid";
 
+	/**
+	 * The name for the column indicating captive network redirect URL
+	 */
+	public static final String COLUMN_REDIRECT_URL = "redirectUrl";
+
 	public static final int INDEX_ID = 0;
 	public static final int INDEX_SSID = 1;
 	public static final int INDEX_USERNAME = 2;
 	public static final int INDEX_PASSWORD = 3;
 	public static final int INDEX_IS_COMPATIBLE = 4;
 	public static final int INDEX_IS_ACCOUNT_VALID = 5;
+	public static final int INDEX_REDIRECT_URL = 6;
 
 	/**
 	 * The int value used for COLUMN_IS_COMPATIBLE and COLUMN_IS_ACCOUNT_VALID
@@ -83,7 +89,8 @@ public class AccountsTable {
 			+ " TEXT NOT NULL, " + COLUMN_PASSWORD + " TEXT NOT NULL, "
 			+ COLUMN_IS_COMPATIBLE + " INTEGER NOT NULL DEFAULT "
 			+ TRISTATE_NOT_APPLICABLE + ", " + COLUMN_IS_VALID
-			+ " INTEGER NOT NULL DEFAULT " + TRISTATE_NOT_APPLICABLE + ");";
+			+ " INTEGER NOT NULL DEFAULT " + TRISTATE_NOT_APPLICABLE + ", "
+			+ COLUMN_REDIRECT_URL + " TEXT" + ");";
 
 	private static final String TABLE_DROP_SQL = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
