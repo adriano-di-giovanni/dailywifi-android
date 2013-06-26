@@ -69,23 +69,25 @@ public class Account {
 	private static Account accountFromCursor(Cursor cursor) {
 		Account account = null;
 		if (null != cursor) {
-			cursor.moveToFirst();
-			account = new Account(
-					cursor.getInt(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_ID)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_SSID)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_USERNAME)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_PASSWORD)),
-					cursor.getInt(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_COMPATIBLE)),
-					cursor.getInt(cursor
-							.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_VALID)));
-			cursor.close();
+			if (0 != cursor.getCount()) {
+				cursor.moveToFirst();
+				account = new Account(
+						cursor.getInt(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_ID)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_SSID)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_USERNAME)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_PASSWORD)),
+						cursor.getInt(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_COMPATIBLE)),
+						cursor.getInt(cursor
+								.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_VALID)));
+				cursor.close();
 
-			Log.d(DEBUG_TAG, "Account found: " + account.toString());
+				Log.d(DEBUG_TAG, "Account found: " + account.toString());
+			}
 		}
 		return account;
 	}

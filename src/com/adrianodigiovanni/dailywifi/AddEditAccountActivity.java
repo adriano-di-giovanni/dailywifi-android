@@ -13,7 +13,7 @@ import android.widget.EditText;
 public class AddEditAccountActivity extends Activity {
 
 	private Account mAccount = null;
-	
+
 	private EditText mEditTextSSID;
 	private EditText mEditTextUsername;
 	private EditText mEditTextPassword;
@@ -42,7 +42,7 @@ public class AddEditAccountActivity extends Activity {
 
 	private void fill(Uri uri) {
 		mAccount = Account.getByUri(this, uri);
-		
+
 		mEditTextSSID.setText(mAccount.getSSID());
 		mEditTextUsername.setText(mAccount.getUsername());
 		mEditTextPassword.setText(mAccount.getPassword());
@@ -59,21 +59,24 @@ public class AddEditAccountActivity extends Activity {
 		String ssid = mEditTextSSID.getText().toString().trim();
 		String username = mEditTextUsername.getText().toString().trim();
 		String password = mEditTextPassword.getText().toString().trim();
-		
+
 		Resources resources = getResources();
 
 		if (ssid.isEmpty()) {
-			mEditTextSSID.setError(resources.getString(R.string.error_required_ssid));
+			mEditTextSSID.setError(resources
+					.getString(R.string.error_required_ssid));
 			hasErrors = true;
 		}
 
 		if (username.isEmpty()) {
-			mEditTextUsername.setError(resources.getString(R.string.error_required_username));
+			mEditTextUsername.setError(resources
+					.getString(R.string.error_required_username));
 			hasErrors = true;
 		}
 
 		if (password.isEmpty()) {
-			mEditTextPassword.setError(resources.getString(R.string.error_required_password));
+			mEditTextPassword.setError(resources
+					.getString(R.string.error_required_password));
 			hasErrors = true;
 		}
 
@@ -85,7 +88,9 @@ public class AddEditAccountActivity extends Activity {
 			mAccount.setUsername(username);
 			mAccount.setPassword(password);
 			Account.saveWithUri(this, mUri, mAccount);
-			
+
+			// TODO: service must be started only if the edited account is for
+			// the same WiFi network the device is connected to
 			BackgroundService.startSelf(this, ActionType.LOGIN);
 
 			finish();
