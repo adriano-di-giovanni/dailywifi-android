@@ -9,3 +9,5 @@ Icon
 bin/
 gen/
 doc/
+
+git-commit.sh

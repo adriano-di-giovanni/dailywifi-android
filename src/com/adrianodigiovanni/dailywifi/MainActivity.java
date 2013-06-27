@@ -2,6 +2,8 @@ package com.adrianodigiovanni.dailywifi;
 
 import java.util.ArrayList;
 
+import com.adrianodigiovanni.app.AbstractPortraitFragmentActivity;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -16,7 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AbstractPortraitFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

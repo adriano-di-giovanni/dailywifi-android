@@ -56,6 +56,8 @@ public class ActionTask extends
 
 				URL responseURL = HttpURLConnectionHelper
 						.getResponseURL(TEST_URL);
+				
+				Log.d(DEBUG_TAG, responseURL.toString());
 
 				boolean isCaptiveAndLoggedOut = !responseURL.equals(TEST_URL);
 

@@ -1,8 +1,8 @@
 package com.adrianodigiovanni.dailywifi;
 
+import com.adrianodigiovanni.app.AbstractPortraitActivity;
 import com.adrianodigiovanni.dailywifi.attempt.ActionType;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-public class AddEditAccountActivity extends Activity {
+public class AddEditAccountActivity extends AbstractPortraitActivity {
 
 	private Account mAccount = null;
 
