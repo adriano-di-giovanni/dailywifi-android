@@ -18,7 +18,7 @@
     </style>
     
     <!-- Activity Theme -->
-    <style name="ActivityTheme" parent="AppTheme">
+    <style name="FullscreenActivityTheme" parent="AppTheme">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>

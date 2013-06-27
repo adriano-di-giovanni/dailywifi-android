@@ -7,7 +7,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    
+
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
@@ -19,8 +19,9 @@
         android:logo="@drawable/logo"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.adrianodigiovanni.dailywifi.MainActivity"
-            android:label="@string/app_name" >
+            android:name="com.adrianodigiovanni.dailywifi.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullscreenActivityTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,9 +29,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name=".AddEditAccountActivity"
             android:label="@string/app_name"
-            android:theme="@style/ActivityTheme" >
+            android:theme="@style/FullscreenActivityTheme" >
         </activity>
 
         <provider
@@ -44,7 +49,7 @@
                 </action>
             </intent-filter>
         </receiver>
-        
+
         <service android:name=".BackgroundService" />
     </application>
 
