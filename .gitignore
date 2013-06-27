@@ -11,3 +11,6 @@ gen/
 doc/
 
 git-commit.sh
+
+.tmp/bower_components/
+.tmp/node_modules/
