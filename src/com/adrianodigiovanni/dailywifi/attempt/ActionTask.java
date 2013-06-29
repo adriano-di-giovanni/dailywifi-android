@@ -122,46 +122,4 @@ public class ActionTask extends
 	protected void onPostExecute(Boolean result) {
 		mParams.getListener().onComplete(result.booleanValue());
 	}
-
-	// TODO: DailyWiFi API. Immutable endpoint with base URL context. Resource
-	// is a json object containing info about login URL, logout URL. If I
-	// understand well, redirect URL has https protocol. This resolves
-	// certificate problems because the authentication takes place while
-	// accessing that resource.
-	private static URL getBaseURL(URL url) {
-		URL baseURL = null;
-		try {
-			baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(),
-					"");
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
-
-		return baseURL;
-	}
-
-	private static URL getLoginURL(URL baseURL, Account account) {
-		URL url = null;
-		try {
-			url = new URL(baseURL.getProtocol(), baseURL.getHost(),
-					baseURL.getPort(), "api/v1/account/login?username="
-							+ account.getUsername() + "&password="
-							+ account.getPassword());
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
-		return url;
-	}
-
-	private static URL getLogoutURL(URL baseURL, Account account) {
-		URL url = null;
-		try {
-			url = new URL(baseURL.getProtocol(), baseURL.getHost(),
-					baseURL.getPort(), "api/v1/account/logout?username="
-							+ account.getUsername());
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
-		return url;
-	}
 }
