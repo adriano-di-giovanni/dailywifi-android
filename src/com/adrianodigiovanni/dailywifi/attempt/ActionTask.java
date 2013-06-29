@@ -18,7 +18,7 @@ import android.util.Log;
 public class ActionTask extends
 		AsyncTask<ActionTaskParams, ActionProgress, Boolean> {
 
-	private static final String DEBUG_TAG = "ActionTask";
+	private static final String TAG = "ActionTask";
 
 	private static final URL TEST_URL;
 	static {
@@ -42,80 +42,66 @@ public class ActionTask extends
 
 		WifiInfo wifiInfo = mParams.getWifiInfo();
 
+		Account account;
+		URL responseURL;
+		DWFInfo dwfInfo;
+		URL actionTaskURL;
+		HttpsURLConnection httpsURLConnection = null;
+		int responseCode;
+
 		if (null != wifiInfo && null != wifiInfo.getSSID()
 				&& 0 != wifiInfo.getIpAddress()) {
 
 			publishProgress(ActionProgress.ACTIVE_NETWORK_IS_WIFI);
 
-			Account account = Account.getBySSID(mParams.getContext(),
+			account = Account.getBySSID(mParams.getContext(),
 					wifiInfo.getSSID());
 
 			if (null != account) {
 
 				publishProgress(ActionProgress.ACCOUNT_EXISTS);
 
-				URL responseURL = HttpURLConnectionHelper
-						.getResponseURL(TEST_URL);
-				
-				Log.d(DEBUG_TAG, responseURL.toString());
+				responseURL = HttpURLConnectionHelper.getResponseURL(TEST_URL);
 
 				boolean isCaptiveAndLoggedOut = !responseURL.equals(TEST_URL);
-
-				URL baseURL;
-				URL actionTaskURL;
-				HttpsURLConnection httpsURLConnection = null;
 
 				if (isCaptiveAndLoggedOut) {
 
 					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
 
-					if (ActionType.LOGIN == mParams.getActionType()) {
+					dwfInfo = DWFInfo.fromResponseURL(responseURL);
 
-						baseURL = getBaseURL(responseURL);
-						actionTaskURL = getLoginURL(baseURL, account);
+					// network is dailywifi compatible
+					if (null != dwfInfo) {
+						if (ActionType.LOGIN == mParams.getActionType()) {
 
-						try {
-							httpsURLConnection = HttpsURLConnectionHelper
-									.connectTo(actionTaskURL, "POST");
-							int responseCode = httpsURLConnection
-									.getResponseCode();
+							actionTaskURL = dwfInfo.getLoginURL(account);
 
-							// TODO: set network compatibility if
-							// responseCode
-							// is not 404
-
-							// Log.d(DEBUG_TAG,
-							// "Response code is: "
-							// + Integer.toString(responseCode));
-
-							switch (responseCode) {
-							case HttpsURLConnection.HTTP_OK:
-								publishProgress(ActionProgress.LOGGED_IN);
-								// credentials are valid
-								account.setIsValid(true);
-								account.setRedirectURL(baseURL);
-								result = true;
-								break;
-							case HttpsURLConnection.HTTP_FORBIDDEN:
-								publishProgress(ActionProgress.CREDENTIALS_ARE_NOT_VALID);
-								// credentials are not valid
-								account.setIsValid(false);
-							}
-
-						} catch (IOException e) {
-							// do nothing
-						} finally {
-							if (null != httpsURLConnection) {
-								httpsURLConnection.disconnect();
+							try {
+								
+								httpsURLConnection = HttpsURLConnectionHelper
+										.connectTo(actionTaskURL, "POST");
+								
+								responseCode = httpsURLConnection
+										.getResponseCode();
+								
+								if (dwfInfo.isLoggedIn(responseCode)) {
+									publishProgress(ActionProgress.LOGGED_IN);
+									account.setIsValid(true);
+									result = true;
+								} else {
+									publishProgress(ActionProgress.CREDENTIALS_ARE_NOT_VALID);
+									account.setIsValid(false);
+								}
+							} catch (IOException e) {
+								// do nothing
+							} finally {
+								if (null != httpsURLConnection) {
+									httpsURLConnection.disconnect();
+								}
 							}
 						}
 					}
-				} else {
-					// TODO: logout. You do not have the URL to logout. So, you
-					// have to keep note of the URL in the database
-
-					// TODO: Toast notification if action is login but network
-					// is not captive or user is logged in
 				}
 
 				account.save(mParams.getContext());
@@ -143,7 +129,6 @@ public class ActionTask extends
 	// certificate problems because the authentication takes place while
 	// accessing that resource.
 	private static URL getBaseURL(URL url) {
-		Log.d(DEBUG_TAG, "URL: " + url.toString());
 		URL baseURL = null;
 		try {
 			baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(),
@@ -152,7 +137,6 @@ public class ActionTask extends
 			// do nothing
 		}
 
-		Log.d(DEBUG_TAG, "Base URL: " + baseURL.toString());
 		return baseURL;
 	}
 
