@@ -73,6 +73,7 @@ public class ActionTask extends
 
 					// network is dailywifi compatible
 					if (null != dwfInfo) {
+						
 						if (ActionType.LOGIN == mParams.getActionType()) {
 
 							actionTaskURL = dwfInfo.getLoginURL(account);
@@ -101,6 +102,8 @@ public class ActionTask extends
 								}
 							}
 						}
+						
+						// TODO: logout
 					}
 				}
 
