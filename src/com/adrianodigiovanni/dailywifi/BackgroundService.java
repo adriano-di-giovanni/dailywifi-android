@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class BackgroundService extends Service {
 
-	private static final String DEBUG_TAG = "BackgroundService";
+	private static final String TAG = "BackgroundService";
 
 	private static final String EXTRA_ACTION_TYPE = "actionType";
 
@@ -42,7 +42,7 @@ public class BackgroundService extends Service {
 		final ActionType actionType = (ActionType) intent
 				.getSerializableExtra(EXTRA_ACTION_TYPE);
 
-		Log.d(DEBUG_TAG, actionType.toString());
+		Log.d(TAG, actionType.toString());
 
 		Attempt attempt = Attempt.getInstance(this);
 		attempt.tryAction(actionType, new OnCompleteListener() {

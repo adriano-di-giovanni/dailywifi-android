@@ -2,10 +2,12 @@ package com.adrianodigiovanni.dailywifi;
 
 import com.adrianodigiovanni.app.AbstractPortraitActivity;
 import com.adrianodigiovanni.dailywifi.attempt.ActionType;
+import com.adrianodigiovanni.net.WifiHelper;
 
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -89,9 +91,13 @@ public class AddEditAccountActivity extends AbstractPortraitActivity {
 			mAccount.setPassword(password);
 			Account.saveWithUri(this, mUri, mAccount);
 
-			// TODO: service must be started only if the edited account is for
-			// the same WiFi network the device is connected to
-			BackgroundService.startSelf(this, ActionType.LOGIN);
+			WifiInfo wifiInfo = WifiHelper.getWifiInfo(this);
+
+			// Service must be started only if the edited account is for the
+			// same WiFi network the device is connected to
+			if (null != wifiInfo && wifiInfo.getSSID().equalsIgnoreCase(ssid)) {
+				BackgroundService.startSelf(this, ActionType.LOGIN);
+			}
 
 			finish();
 		}

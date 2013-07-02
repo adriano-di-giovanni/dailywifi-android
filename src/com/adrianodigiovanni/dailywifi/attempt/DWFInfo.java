@@ -143,7 +143,7 @@ public class DWFInfo {
 	}
 	
 	public boolean isLoggedIn(int responseCode) {
-		// TODO: handle API versions if neede
+		// TODO: handle API versions if needed
 		return HttpsURLConnection.HTTP_OK == responseCode;
 	}
 

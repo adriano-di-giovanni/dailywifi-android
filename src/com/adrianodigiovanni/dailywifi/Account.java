@@ -15,7 +15,7 @@ import android.util.Log;
  * This class represents a WiFi network account input by the user.
  */
 public class Account {
-	private static final String DEBUG_TAG = "Account";
+	private static final String TAG = "Account";
 
 	private static final String[] mProjection = { AccountsTable.COLUMN_ID,
 			AccountsTable.COLUMN_SSID, AccountsTable.COLUMN_USERNAME,
@@ -48,7 +48,7 @@ public class Account {
 				AccountsProvider.CONTENT_URI, mProjection, selection,
 				selectionArgs, null);
 
-		Log.d(DEBUG_TAG, "Checking if an account exists for network with SSID "
+		Log.d(TAG, "Checking if an account exists for network with SSID "
 				+ ssid);
 
 		return accountFromCursor(cursor);
@@ -64,7 +64,7 @@ public class Account {
 		Cursor cursor = context.getContentResolver().query(uri, mProjection,
 				null, null, null);
 
-		Log.d(DEBUG_TAG,
+		Log.d(TAG,
 				"Checking if an account exists by Uri " + uri.toString());
 
 		return accountFromCursor(cursor);
@@ -92,7 +92,7 @@ public class Account {
 								.getColumnIndexOrThrow(AccountsTable.COLUMN_REDIRECT_URL)));
 				cursor.close();
 
-				Log.d(DEBUG_TAG, "Account found: " + account.toString());
+				Log.d(TAG, "Account found: " + account.toString());
 			}
 		}
 		return account;
@@ -107,12 +107,12 @@ public class Account {
 		ContentValues contentValues = account.getContentValues();
 
 		if (null == uri) {
-			Log.d(DEBUG_TAG, "Saving new account: " + account.toString());
+			Log.d(TAG, "Saving new account: " + account.toString());
 
 			context.getContentResolver().insert(AccountsProvider.CONTENT_URI,
 					contentValues);
 		} else {
-			Log.d(DEBUG_TAG, "Updating account: " + account.toString());
+			Log.d(TAG, "Updating account: " + account.toString());
 
 			context.getContentResolver().update(uri, contentValues, null, null);
 		}
@@ -122,7 +122,7 @@ public class Account {
 	 * Deletes the account from the database using URI to determne _ID
 	 */
 	public static void deleteByUri(Context context, Uri uri) {
-		Log.d(DEBUG_TAG, "Deleting account by Uri " + uri.toString());
+		Log.d(TAG, "Deleting account by Uri " + uri.toString());
 		context.getContentResolver().delete(uri, null, null);
 	}
 
@@ -147,7 +147,7 @@ public class Account {
 		mIsValid = isValid;
 		mRedirectURL = redirectURL;
 
-		Log.d(DEBUG_TAG, "Account created: " + toString());
+		Log.d(TAG, "Account created: " + toString());
 	}
 
 	public String getSSID() {
