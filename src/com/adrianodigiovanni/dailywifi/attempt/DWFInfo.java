@@ -35,15 +35,15 @@ public class DWFInfo {
 	/**
 	 * Returns a DWFInfo object if network is DailyWiFi compatible.
 	 * 
-	 * @param responseURL
+	 * @param redirectURL
 	 *            The response URL from {@link ActionTask}
 	 * @return DWFInfo or @null if network is not DailyWiFi compatible.
 	 */
-	public static DWFInfo fromResponseURL(URL responseURL) {
+	public static DWFInfo fromRedirectURL(URL redirectURL) {
 
 		DWFInfo dwfInfo = null;
 
-		URL url = getURL(responseURL);
+		URL url = getURL(redirectURL);
 		HttpsURLConnection httpsURLConnection = null;
 		int responseCode;
 		String contentType;
@@ -144,6 +144,11 @@ public class DWFInfo {
 	
 	public boolean isLoggedIn(int responseCode) {
 		// TODO: handle API versions if needed
+		return HttpsURLConnection.HTTP_OK == responseCode;
+	}
+	
+	public boolean isLoggedOut(int responseCode) {
+		// TODO: handle API version if needed
 		return HttpsURLConnection.HTTP_OK == responseCode;
 	}
 

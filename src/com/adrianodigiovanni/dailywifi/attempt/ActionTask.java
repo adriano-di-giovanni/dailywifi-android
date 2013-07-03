@@ -67,25 +67,27 @@ public class ActionTask extends
 
 				if (isCaptiveAndLoggedOut) {
 
+					account.setRedirectURL(responseURL);
+
 					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
 
-					dwfInfo = DWFInfo.fromResponseURL(responseURL);
+					dwfInfo = DWFInfo.fromRedirectURL(responseURL);
 
 					// network is dailywifi compatible
 					if (null != dwfInfo) {
-						
+
 						if (ActionType.LOGIN == mParams.getActionType()) {
 
 							actionTaskURL = dwfInfo.getLoginURL(account);
 
 							try {
-								
+
 								httpsURLConnection = HttpsURLConnectionHelper
 										.connectTo(actionTaskURL, "POST");
-								
+
 								responseCode = httpsURLConnection
 										.getResponseCode();
-								
+
 								if (dwfInfo.isLoggedIn(responseCode)) {
 									publishProgress(ActionProgress.LOGGED_IN);
 									account.setIsValid(true);
@@ -102,8 +104,40 @@ public class ActionTask extends
 								}
 							}
 						}
-						
-						// TODO: logout
+
+					}
+				} else {
+
+					dwfInfo = DWFInfo.fromRedirectURL(account.getRedirectURL());
+
+					// network is captive and dailywifi compatible and device is
+					// logged in
+					if (null != dwfInfo) {
+
+						if (ActionType.LOGOUT == mParams.getActionType()) {
+
+							actionTaskURL = dwfInfo.getLogoutURL(account);
+
+							try {
+
+								httpsURLConnection = HttpsURLConnectionHelper
+										.connectTo(actionTaskURL, "POST");
+
+								responseCode = httpsURLConnection
+										.getResponseCode();
+								
+								if (dwfInfo.isLoggedOut(responseCode)) {
+									publishProgress(ActionProgress.LOGGED_OUT);
+									result = true;
+								}
+							} catch (IOException e) {
+								// do nothing
+							} finally {
+								if (null != httpsURLConnection) {
+									httpsURLConnection.disconnect();
+								}
+							}
+						}
 					}
 				}
 
