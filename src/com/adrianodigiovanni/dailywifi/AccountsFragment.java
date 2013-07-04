@@ -45,7 +45,7 @@ public class AccountsFragment extends ListFragment implements
 		
 		super.onListItemClick(l, v, position, id);
 		
-		Intent intent = new Intent(getActivity(), AddEditAccountActivity.class);
+		Intent intent = new Intent(getActivity(), AccountStatusActivity.class);
 		
 		Uri uri = Uri.withAppendedPath(AccountsProvider.CONTENT_ID_URI, Long.toString(id));
 		intent.putExtra(AccountsProvider.CONTENT_ITEM_TYPE, uri);

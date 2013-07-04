@@ -37,6 +37,13 @@
             android:label="@string/app_name"
             android:theme="@style/FullscreenActivityTheme" >
         </activity>
+        <activity
+            android:name=".AccountStatusActivity"
+            android:label="@string/app_name" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <provider
             android:name=".AccountsProvider"
