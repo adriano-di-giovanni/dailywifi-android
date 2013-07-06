@@ -37,6 +37,7 @@ public class ActionTask extends
 	protected Boolean doInBackground(ActionTaskParams... params) {
 
 		mParams = params[0];
+		ActionType actionType = mParams.getActionType();
 
 		boolean result = false;
 
@@ -52,7 +53,7 @@ public class ActionTask extends
 		if (null != wifiInfo && null != wifiInfo.getSSID()
 				&& 0 != wifiInfo.getIpAddress()) {
 
-			publishProgress(ActionProgress.ACTIVE_NETWORK_IS_WIFI);
+			// publishProgress(ActionProgress.ACTIVE_NETWORK_IS_WIFI);
 
 			account = Account.getBySSID(mParams.getContext(),
 					wifiInfo.getSSID());
@@ -75,9 +76,11 @@ public class ActionTask extends
 
 					// network is dailywifi compatible
 					if (null != dwfInfo) {
+						
+						account.setIsCompatible(true);
 
-						if (ActionType.LOGIN == mParams.getActionType()) {
-
+						switch (actionType) {
+						case LOGIN:
 							actionTaskURL = dwfInfo.getLoginURL(account);
 
 							try {
@@ -91,6 +94,8 @@ public class ActionTask extends
 								if (dwfInfo.isLoggedIn(responseCode)) {
 									publishProgress(ActionProgress.LOGGED_IN);
 									account.setIsValid(true);
+									account.setLastUsed(System
+											.currentTimeMillis());
 									result = true;
 								} else {
 									publishProgress(ActionProgress.CREDENTIALS_ARE_NOT_VALID);
@@ -103,8 +108,11 @@ public class ActionTask extends
 									httpsURLConnection.disconnect();
 								}
 							}
-						}
 
+							break;
+						case LOGOUT:
+							break;
+						}
 					}
 				} else {
 
@@ -114,8 +122,11 @@ public class ActionTask extends
 					// logged in
 					if (null != dwfInfo) {
 
-						if (ActionType.LOGOUT == mParams.getActionType()) {
-
+						switch (actionType) {
+						case LOGIN:
+							publishProgress(ActionProgress.ALREADY_LOGGED_IN);
+							break;
+						case LOGOUT:
 							actionTaskURL = dwfInfo.getLogoutURL(account);
 
 							try {
@@ -125,7 +136,7 @@ public class ActionTask extends
 
 								responseCode = httpsURLConnection
 										.getResponseCode();
-								
+
 								if (dwfInfo.isLoggedOut(responseCode)) {
 									publishProgress(ActionProgress.LOGGED_OUT);
 									result = true;
@@ -137,6 +148,7 @@ public class ActionTask extends
 									httpsURLConnection.disconnect();
 								}
 							}
+							break;
 						}
 					}
 				}

@@ -20,7 +20,8 @@ public class Account {
 	private static final String[] mProjection = { AccountsTable.COLUMN_ID,
 			AccountsTable.COLUMN_SSID, AccountsTable.COLUMN_USERNAME,
 			AccountsTable.COLUMN_PASSWORD, AccountsTable.COLUMN_IS_COMPATIBLE,
-			AccountsTable.COLUMN_IS_VALID, AccountsTable.COLUMN_REDIRECT_URL };
+			AccountsTable.COLUMN_IS_VALID, AccountsTable.COLUMN_REDIRECT_URL,
+			AccountsTable.COLUMN_LAST_USED };
 
 	private int mID;
 	private String mSSID;
@@ -29,6 +30,7 @@ public class Account {
 	private int mIsCompatible;
 	private int mIsValid;
 	private String mRedirectURL;
+	private Long mLastUsed;
 
 	// TODO: SSID must be unique
 
@@ -64,8 +66,7 @@ public class Account {
 		Cursor cursor = context.getContentResolver().query(uri, mProjection,
 				null, null, null);
 
-		Log.d(TAG,
-				"Checking if an account exists by Uri " + uri.toString());
+		Log.d(TAG, "Checking if an account exists by Uri " + uri.toString());
 
 		return accountFromCursor(cursor);
 	}
@@ -75,21 +76,30 @@ public class Account {
 		if (null != cursor) {
 			if (0 != cursor.getCount()) {
 				cursor.moveToFirst();
+				
+				int columnIndex = cursor.getColumnIndex(AccountsTable.COLUMN_LAST_USED);
+				Long lastUsed = null;
+				
+				if (!cursor.isNull(columnIndex)) {
+					lastUsed = Long.valueOf(cursor.getLong(columnIndex));
+				}
+				
 				account = new Account(
 						cursor.getInt(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_ID)),
+								.getColumnIndex(AccountsTable.COLUMN_ID)),
 						cursor.getString(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_SSID)),
+								.getColumnIndex(AccountsTable.COLUMN_SSID)),
 						cursor.getString(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_USERNAME)),
+								.getColumnIndex(AccountsTable.COLUMN_USERNAME)),
 						cursor.getString(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_PASSWORD)),
+								.getColumnIndex(AccountsTable.COLUMN_PASSWORD)),
 						cursor.getInt(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_COMPATIBLE)),
+								.getColumnIndex(AccountsTable.COLUMN_IS_COMPATIBLE)),
 						cursor.getInt(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_IS_VALID)),
+								.getColumnIndex(AccountsTable.COLUMN_IS_VALID)),
 						cursor.getString(cursor
-								.getColumnIndexOrThrow(AccountsTable.COLUMN_REDIRECT_URL)));
+								.getColumnIndex(AccountsTable.COLUMN_REDIRECT_URL)),
+						lastUsed);
 				cursor.close();
 
 				Log.d(TAG, "Account found: " + account.toString());
@@ -105,7 +115,7 @@ public class Account {
 	 */
 	public static void saveWithUri(Context context, Uri uri, Account account) {
 		ContentValues contentValues = account.getContentValues();
-
+		
 		if (null == uri) {
 			Log.d(TAG, "Saving new account: " + account.toString());
 
@@ -128,17 +138,17 @@ public class Account {
 
 	public Account() {
 		this(0, null, null, null, AccountsTable.TRISTATE_NOT_APPLICABLE,
-				AccountsTable.TRISTATE_NOT_APPLICABLE, null);
+				AccountsTable.TRISTATE_NOT_APPLICABLE, null, null);
 	}
 
 	public Account(String ssid, String username, String password) {
 		this(0, ssid, username, password,
 				AccountsTable.TRISTATE_NOT_APPLICABLE,
-				AccountsTable.TRISTATE_NOT_APPLICABLE, null);
+				AccountsTable.TRISTATE_NOT_APPLICABLE, null, null);
 	}
 
 	private Account(int id, String ssid, String username, String password,
-			int isCompatible, int isValid, String redirectURL) {
+			int isCompatible, int isValid, String redirectURL, Long lastUsed) {
 		mID = id;
 		mSSID = ssid;
 		mUsername = username;
@@ -146,6 +156,7 @@ public class Account {
 		mIsCompatible = isCompatible;
 		mIsValid = isValid;
 		mRedirectURL = redirectURL;
+		mLastUsed = lastUsed;
 
 		Log.d(TAG, "Account created: " + toString());
 	}
@@ -160,7 +171,7 @@ public class Account {
 	 */
 	public void setSSID(String ssid) {
 		if (!ssid.equals(mSSID)) {
-			resetTriStateMembers();
+			resetMembers();
 		}
 		mSSID = ssid;
 	}
@@ -175,7 +186,7 @@ public class Account {
 	 */
 	public void setUsername(String username) {
 		if (!username.equals(mUsername)) {
-			resetTriStateMembers();
+			resetMembers();
 		}
 		mUsername = username;
 	}
@@ -190,7 +201,7 @@ public class Account {
 	 */
 	public void setPassword(String password) {
 		if (!password.equals(mPassword)) {
-			resetTriStateMembers();
+			resetMembers();
 		}
 		mPassword = password;
 	}
@@ -257,6 +268,23 @@ public class Account {
 	}
 
 	/**
+	 * Returns the last login time in milliseconds since January 1, 1970
+	 * 00:00:00 UTC
+	 */
+	public Long getLastUsed() {
+		return mLastUsed;
+	}
+
+	/**
+	 * @param timeMillis
+	 *            Last login time in milliseconds since January 1, 1970 00:00:00
+	 *            UTC
+	 */
+	public void setLastUsed(long timeMillis) {
+		mLastUsed = Long.valueOf(timeMillis);
+	}
+
+	/**
 	 * Saves the account in the database
 	 */
 	public void save(Context context) {
@@ -290,6 +318,7 @@ public class Account {
 				.append("isCompatible: " + mIsCompatible + ", " + NEW_LINE);
 		stringBuilder.append("isValid: " + mIsValid + ", " + NEW_LINE);
 		stringBuilder.append("redirectURL: " + mRedirectURL + ", " + NEW_LINE);
+		stringBuilder.append("lastUsed: " + mLastUsed + ", " + NEW_LINE);
 		stringBuilder.append("}" + NEW_LINE);
 		return stringBuilder.toString();
 	}
@@ -302,6 +331,7 @@ public class Account {
 		contentValues.put(AccountsTable.COLUMN_IS_COMPATIBLE, mIsCompatible);
 		contentValues.put(AccountsTable.COLUMN_IS_VALID, mIsValid);
 		contentValues.put(AccountsTable.COLUMN_REDIRECT_URL, mRedirectURL);
+		contentValues.put(AccountsTable.COLUMN_LAST_USED, mLastUsed);
 		return contentValues;
 	}
 
@@ -310,11 +340,11 @@ public class Account {
 				: AccountsTable.TRISTATE_FALSE;
 	}
 
-	// TODO: changing SSID must trigger compatibility flag reset only. Changing
-	// username or password must trigger credential validity flag reset only.
-	private void resetTriStateMembers() {
+	private void resetMembers() {
 		mIsCompatible = AccountsTable.TRISTATE_NOT_APPLICABLE;
 		mIsValid = AccountsTable.TRISTATE_NOT_APPLICABLE;
+		mRedirectURL = null;
+		mLastUsed = null;
 	}
 
 	private static Boolean getBoolean(int fromTriState) {

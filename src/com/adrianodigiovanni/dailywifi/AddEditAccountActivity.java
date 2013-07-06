@@ -9,10 +9,13 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 public class AddEditAccountActivity extends AbstractPortraitActivity {
+
+	private static final String TAG = "AddEditAccountActivity";
 
 	private Account mAccount = null;
 
@@ -37,7 +40,6 @@ public class AddEditAccountActivity extends AbstractPortraitActivity {
 			mUri = intent
 					.getParcelableExtra(AccountsProvider.CONTENT_ITEM_TYPE);
 
-			findViewById(R.id.button_remove).setVisibility(View.VISIBLE);
 			fill(mUri);
 		}
 	}
@@ -95,17 +97,14 @@ public class AddEditAccountActivity extends AbstractPortraitActivity {
 
 			// Service must be started only if the edited account is for the
 			// same WiFi network the device is connected to
-			if (null != wifiInfo && wifiInfo.getSSID().equalsIgnoreCase(ssid)) {
-				BackgroundService.startSelf(this, ActionType.LOGIN);
+			if (null != wifiInfo) {
+				String wifiInfoSSID = wifiInfo.getSSID();
+				if (null != wifiInfoSSID && wifiInfoSSID.equalsIgnoreCase(ssid)) {
+					BackgroundService.startSelf(this, ActionType.LOGIN);
+				}
 			}
 
 			finish();
 		}
-	}
-
-	// TODO: Implement undo
-	public void onRemove(View view) {
-		Account.deleteByUri(this, mUri);
-		finish();
 	}
 }
