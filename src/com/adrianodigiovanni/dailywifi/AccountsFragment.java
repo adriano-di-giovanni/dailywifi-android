@@ -27,7 +27,7 @@ public class AccountsFragment extends ListFragment implements
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		setEmptyText(getResources().getString(R.string.text_view_no_accounts));
+		setEmptyText(getResources().getString(R.string.noAccounts));
 
 		mAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_list_item_1, null,

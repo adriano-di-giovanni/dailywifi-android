@@ -15,12 +15,12 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/appName"
         android:logo="@drawable/logo"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.adrianodigiovanni.dailywifi.SplashActivity"
-            android:label="@string/app_name"
+            android:label="@string/appName"
             android:theme="@style/FullscreenActivityTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,16 +30,16 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/appName" >
         </activity>
         <activity
             android:name=".AddEditAccountActivity"
-            android:label="@string/app_name"
+            android:label="@string/appName"
             android:theme="@style/FullscreenActivityTheme" >
         </activity>
         <activity
             android:name=".AccountStatusActivity"
-            android:label="@string/app_name" >
+            android:label="@string/appName" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

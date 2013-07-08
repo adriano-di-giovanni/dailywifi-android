@@ -94,7 +94,7 @@ public class ActionTask extends
 								if (dwfInfo.isLoggedIn(responseCode)) {
 									publishProgress(ActionProgress.LOGGED_IN);
 									account.setIsValid(true);
-									account.setLastUsed(System
+									account.setLastAccess(System
 											.currentTimeMillis());
 									result = true;
 								} else {
@@ -115,41 +115,46 @@ public class ActionTask extends
 						}
 					}
 				} else {
+					
+					responseURL = account.getRedirectURL();
+					
+					// if device is already logged in before account creation
+					if (null != responseURL) {
+						dwfInfo = DWFInfo.fromRedirectURL(account.getRedirectURL());
 
-					dwfInfo = DWFInfo.fromRedirectURL(account.getRedirectURL());
+						// network is captive and dailywifi compatible and device is
+						// logged in
+						if (null != dwfInfo) {
 
-					// network is captive and dailywifi compatible and device is
-					// logged in
-					if (null != dwfInfo) {
+							switch (actionType) {
+							case LOGIN:
+								publishProgress(ActionProgress.ALREADY_LOGGED_IN);
+								break;
+							case LOGOUT:
+								actionTaskURL = dwfInfo.getLogoutURL(account);
 
-						switch (actionType) {
-						case LOGIN:
-							publishProgress(ActionProgress.ALREADY_LOGGED_IN);
-							break;
-						case LOGOUT:
-							actionTaskURL = dwfInfo.getLogoutURL(account);
+								try {
 
-							try {
+									httpsURLConnection = HttpsURLConnectionHelper
+											.connectTo(actionTaskURL, "POST");
 
-								httpsURLConnection = HttpsURLConnectionHelper
-										.connectTo(actionTaskURL, "POST");
+									responseCode = httpsURLConnection
+											.getResponseCode();
 
-								responseCode = httpsURLConnection
-										.getResponseCode();
-
-								if (dwfInfo.isLoggedOut(responseCode)) {
-									publishProgress(ActionProgress.LOGGED_OUT);
-									result = true;
+									if (dwfInfo.isLoggedOut(responseCode)) {
+										publishProgress(ActionProgress.LOGGED_OUT);
+										result = true;
+									}
+								} catch (IOException e) {
+									// do nothing
+								} finally {
+									if (null != httpsURLConnection) {
+										httpsURLConnection.disconnect();
+									}
 								}
-							} catch (IOException e) {
-								// do nothing
-							} finally {
-								if (null != httpsURLConnection) {
-									httpsURLConnection.disconnect();
-								}
+								break;
 							}
-							break;
-						}
+						}						
 					}
 				}
 

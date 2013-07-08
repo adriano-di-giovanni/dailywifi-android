@@ -48,7 +48,7 @@ public class AccountsTable {
 	/**
 	 * The name for the column indicating last login date
 	 */
-	public static final String COLUMN_LAST_USED = "lastUsed";
+	public static final String COLUMN_LAST_ACCESS = "lastAccess";
 
 	public static final int INDEX_ID = 0;
 	public static final int INDEX_SSID = 1;
@@ -57,7 +57,7 @@ public class AccountsTable {
 	public static final int INDEX_IS_COMPATIBLE = 4;
 	public static final int INDEX_IS_ACCOUNT_VALID = 5;
 	public static final int INDEX_REDIRECT_URL = 6;
-	public static final int INDEX_LAST_LOGIN = 7;
+	public static final int INDEX_LAST_ACCESS = 7;
 
 	/**
 	 * The int value used for COLUMN_IS_COMPATIBLE and COLUMN_IS_ACCOUNT_VALID
@@ -96,7 +96,7 @@ public class AccountsTable {
 			+ COLUMN_IS_COMPATIBLE + " INTEGER NOT NULL DEFAULT "
 			+ TRISTATE_NOT_APPLICABLE + ", " + COLUMN_IS_VALID
 			+ " INTEGER NOT NULL DEFAULT " + TRISTATE_NOT_APPLICABLE + ", "
-			+ COLUMN_REDIRECT_URL + " TEXT, " + COLUMN_LAST_USED + " INTEGER"
+			+ COLUMN_REDIRECT_URL + " TEXT, " + COLUMN_LAST_ACCESS + " INTEGER"
 			+ ");";
 
 	private static final String TABLE_DROP_SQL = "DROP TABLE IF EXISTS "

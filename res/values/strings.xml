@@ -1,18 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DailyWiFi</string>
-    <string name="action_add">Add</string>
-    <string name="text_view_no_accounts">No accounts</string>
-    <string name="text_view_text_cancel">Cancel</string>
-    <string name="text_view_text_save">Save</string>
-    <string name="text_view_text_edit">Edit</string>
-    <string name="text_view_text_remove">Remove</string>
-    <string name="edit_text_hint_ssid">SSID</string>
-    <string name="edit_text_hint_username">Username</string>
-    <string name="edit_text_hint_password">Password</string>
-    <string name="error_required_ssid">SSID is required</string>
-    <string name="error_required_username">Username is required</string>
-    <string name="error_required_password">Password is required</string>
-    <string name="last_used">Last Used:</string>
+    <string name="appName">DailyWiFi</string>
+    <string name="add">Add</string>
+    <string name="noAccounts">No accounts</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="ssid">SSID</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="ssidIsRequired">SSID is required</string>
+    <string name="usernameIsRequired">Username is required</string>
+    <string name="passwordIsRequired">Password is required</string>
+    <string name="lastAccess">Last access</string>
+    <string name="notAvailable">N/A</string>
 
 </resources>

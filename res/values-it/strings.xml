@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="add">Aggiungi</string>
+    <string name="noAccounts">Nessun account</string>
+    <string name="cancel">Annulla</string>
+    <string name="save">Salva</string>
+    <string name="edit">Modifica</string>
+    <string name="remove">Elimina</string>
+    <string name="ssid">SSID</string>
+    <string name="username">Nome utente</string>
+    <string name="password">Password</string>
+    <string name="ssidIsRequired">L\'SSID è richiesto</string>
+    <string name="usernameIsRequired">Il nome utente è richiesto</string>
+    <string name="passwordIsRequired">La password è richiesta</string>
+    <string name="lastAccess">Ultimo accesso</string>
+    <string name="notAvailable">N/D</string>
+
+</resources>

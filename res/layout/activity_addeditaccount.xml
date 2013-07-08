@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
-                    android:text="@string/text_view_text_cancel"
+                    android:text="@string/cancel"
                     android:textAppearance="?android:attr/textAppearance" >
                 </TextView>
             </LinearLayout>
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
-                    android:text="@string/text_view_text_save"
+                    android:text="@string/save"
                     android:textAppearance="?android:attr/textAppearance" >
                 </TextView>
             </LinearLayout>
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:hint="@string/edit_text_hint_ssid"
+            android:hint="@string/ssid"
             android:inputType="text" >
         </EditText>
 
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:hint="@string/edit_text_hint_username"
+            android:hint="@string/username"
             android:inputType="text" >
         </EditText>
 
@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:hint="@string/edit_text_hint_password"
+            android:hint="@string/password"
             android:inputType="textPassword" >
         </EditText>
     </LinearLayout>

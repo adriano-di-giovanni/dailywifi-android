@@ -68,19 +68,19 @@ public class AddEditAccountActivity extends AbstractPortraitActivity {
 
 		if (ssid.isEmpty()) {
 			mEditTextSSID.setError(resources
-					.getString(R.string.error_required_ssid));
+					.getString(R.string.ssidIsRequired));
 			hasErrors = true;
 		}
 
 		if (username.isEmpty()) {
 			mEditTextUsername.setError(resources
-					.getString(R.string.error_required_username));
+					.getString(R.string.usernameIsRequired));
 			hasErrors = true;
 		}
 
 		if (password.isEmpty()) {
 			mEditTextPassword.setError(resources
-					.getString(R.string.error_required_password));
+					.getString(R.string.passwordIsRequired));
 			hasErrors = true;
 		}
 

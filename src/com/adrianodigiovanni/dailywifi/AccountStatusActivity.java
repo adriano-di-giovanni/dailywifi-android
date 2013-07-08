@@ -4,10 +4,12 @@ import java.util.Date;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import com.adrianodigiovanni.app.AbstractPortraitActivity;
 
 public class AccountStatusActivity extends AbstractPortraitActivity {
+	
+	private static final String TAG = "AccountStatusActivity";
 
 	private Uri mUri = null;
 
@@ -33,29 +37,42 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 			mUri = intent
 					.getParcelableExtra(AccountsProvider.CONTENT_ITEM_TYPE);
 		}
-
-		Account account = Account.getByUri(this, mUri);
-		Long lastUsed = account.getLastUsed();
-
+	}
+	
+	private void fill(Account account) {
+		
+		Long lastUsed = account.getLastAccess();
+		String formattedDate = getString(R.string.notAvailable);
+		
 		if (null != lastUsed) {
-			fill(lastUsed);
+			Date date = new Date(lastUsed.longValue());
+			java.text.DateFormat dateFormat = DateFormat
+					.getDateFormat(getApplicationContext());
+			java.text.DateFormat timeFormat = DateFormat
+					.getTimeFormat(getApplicationContext());
+			formattedDate = dateFormat.format(date) + " "
+					+ timeFormat.format(date);
 		}
-
+		
+		TextView textView;
+		
+		textView = (TextView) findViewById(R.id.textViewSSID);
+		textView.setText(account.getSSID());
+		
+		textView = (TextView) findViewById(R.id.textViewUsername);
+		textView.setText(account.getUsername());
+		
+		textView = (TextView) findViewById(R.id.textViewLastAccess);
+		textView.setText(formattedDate);			
 	}
-
-	private void fill(Long lastUsed) {
-		Date date = new Date(lastUsed.longValue());
-		java.text.DateFormat dateFormat = DateFormat
-				.getDateFormat(getApplicationContext());
-		java.text.DateFormat timeFormat = DateFormat
-				.getTimeFormat(getApplicationContext());
-		String formattedDate = dateFormat.format(date) + " "
-				+ timeFormat.format(date);
-
-		TextView textView = (TextView) findViewById(R.id.textViewLastUsed);
-		textView.setText(formattedDate);
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Account account = Account.getByUri(this, mUri);
+		fill(account);
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 

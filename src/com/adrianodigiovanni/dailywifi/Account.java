@@ -21,7 +21,7 @@ public class Account {
 			AccountsTable.COLUMN_SSID, AccountsTable.COLUMN_USERNAME,
 			AccountsTable.COLUMN_PASSWORD, AccountsTable.COLUMN_IS_COMPATIBLE,
 			AccountsTable.COLUMN_IS_VALID, AccountsTable.COLUMN_REDIRECT_URL,
-			AccountsTable.COLUMN_LAST_USED };
+			AccountsTable.COLUMN_LAST_ACCESS };
 
 	private int mID;
 	private String mSSID;
@@ -30,7 +30,7 @@ public class Account {
 	private int mIsCompatible;
 	private int mIsValid;
 	private String mRedirectURL;
-	private Long mLastUsed;
+	private Long mLastAccess;
 
 	// TODO: SSID must be unique
 
@@ -77,7 +77,7 @@ public class Account {
 			if (0 != cursor.getCount()) {
 				cursor.moveToFirst();
 				
-				int columnIndex = cursor.getColumnIndex(AccountsTable.COLUMN_LAST_USED);
+				int columnIndex = cursor.getColumnIndex(AccountsTable.COLUMN_LAST_ACCESS);
 				Long lastUsed = null;
 				
 				if (!cursor.isNull(columnIndex)) {
@@ -156,7 +156,7 @@ public class Account {
 		mIsCompatible = isCompatible;
 		mIsValid = isValid;
 		mRedirectURL = redirectURL;
-		mLastUsed = lastUsed;
+		mLastAccess = lastUsed;
 
 		Log.d(TAG, "Account created: " + toString());
 	}
@@ -271,8 +271,8 @@ public class Account {
 	 * Returns the last login time in milliseconds since January 1, 1970
 	 * 00:00:00 UTC
 	 */
-	public Long getLastUsed() {
-		return mLastUsed;
+	public Long getLastAccess() {
+		return mLastAccess;
 	}
 
 	/**
@@ -280,8 +280,8 @@ public class Account {
 	 *            Last login time in milliseconds since January 1, 1970 00:00:00
 	 *            UTC
 	 */
-	public void setLastUsed(long timeMillis) {
-		mLastUsed = Long.valueOf(timeMillis);
+	public void setLastAccess(long timeMillis) {
+		mLastAccess = Long.valueOf(timeMillis);
 	}
 
 	/**
@@ -318,7 +318,7 @@ public class Account {
 				.append("isCompatible: " + mIsCompatible + ", " + NEW_LINE);
 		stringBuilder.append("isValid: " + mIsValid + ", " + NEW_LINE);
 		stringBuilder.append("redirectURL: " + mRedirectURL + ", " + NEW_LINE);
-		stringBuilder.append("lastUsed: " + mLastUsed + ", " + NEW_LINE);
+		stringBuilder.append("lastUsed: " + mLastAccess + ", " + NEW_LINE);
 		stringBuilder.append("}" + NEW_LINE);
 		return stringBuilder.toString();
 	}
@@ -331,7 +331,7 @@ public class Account {
 		contentValues.put(AccountsTable.COLUMN_IS_COMPATIBLE, mIsCompatible);
 		contentValues.put(AccountsTable.COLUMN_IS_VALID, mIsValid);
 		contentValues.put(AccountsTable.COLUMN_REDIRECT_URL, mRedirectURL);
-		contentValues.put(AccountsTable.COLUMN_LAST_USED, mLastUsed);
+		contentValues.put(AccountsTable.COLUMN_LAST_ACCESS, mLastAccess);
 		return contentValues;
 	}
 
@@ -344,7 +344,7 @@ public class Account {
 		mIsCompatible = AccountsTable.TRISTATE_NOT_APPLICABLE;
 		mIsValid = AccountsTable.TRISTATE_NOT_APPLICABLE;
 		mRedirectURL = null;
-		mLastUsed = null;
+		mLastAccess = null;
 	}
 
 	private static Boolean getBoolean(int fromTriState) {
