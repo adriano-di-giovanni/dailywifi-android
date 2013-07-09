@@ -15,7 +15,7 @@ import android.widget.Toast;
  */
 public class Toaster {
 	
-	private static final String DEBUG_TAG = "Toaster";
+	private static final String TAG = "Toaster";
 
 	private static Toaster mInstance = null;
 
@@ -61,7 +61,6 @@ public class Toaster {
 	 *            The text you want to show
 	 */
 	public void showToast(CharSequence text) {
-		Log.d(DEBUG_TAG, (String) text);
 		mTextView.setText(text);
 		mToast.show();
 	}

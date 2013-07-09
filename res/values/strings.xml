@@ -16,5 +16,7 @@
     <string name="passwordIsRequired">Password is required</string>
     <string name="lastAccess">Last access</string>
     <string name="notAvailable">N/A</string>
+    <string name="accountExists">Found account</string>
+    <string name="networkIsNotCompatible">Network is not compatible</string>
 
 </resources>
