@@ -190,6 +190,15 @@ public class ActionTask extends
 		case ACTIVE_NETWORK_IS_NOT_COMPATIBLE:
 			text = context.getString(R.string.networkIsNotCompatible);
 			break;
+		case CREDENTIALS_ARE_NOT_VALID:
+			text = context.getString(R.string.invalidCredentials);
+			break;
+		case LOGGED_IN:
+			text = context.getString(R.string.connected);
+			break;
+		case ALREADY_LOGGED_IN:
+			text = context.getString(R.string.alreadyConnected);
+			break;
 		default:
 			text = actionProgress.toString();
 			break;

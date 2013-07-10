@@ -55,6 +55,8 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 		}
 		
 		TextView textView;
+		Boolean strobe;
+		String text;
 		
 		textView = (TextView) findViewById(R.id.textViewSSID);
 		textView.setText(account.getSSID());
@@ -62,8 +64,26 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 		textView = (TextView) findViewById(R.id.textViewUsername);
 		textView.setText(account.getUsername());
 		
+		strobe = account.getIsCompatible();
+		if (null != strobe) {
+			text = getString((strobe.booleanValue()) ? R.string.yes : R.string.no);
+		} else {
+			text = getString(R.string.notAvailable); 
+		}
+		textView = (TextView) findViewById(R.id.textViewCompatible);
+		textView.setText(text);
+		
+		strobe = account.getIsValid();
+		if (null != strobe) {
+			text = getString((strobe.booleanValue()) ? R.string.yes : R.string.no);
+		} else {
+			text = getString(R.string.notAvailable);
+		}
+		textView = (TextView) findViewById(R.id.textViewCredentialsAreValid);
+		textView.setText(text);
+		
 		textView = (TextView) findViewById(R.id.textViewLastAccess);
-		textView.setText(formattedDate);			
+		textView.setText(formattedDate);
 	}
 	
 	@Override

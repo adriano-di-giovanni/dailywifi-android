@@ -18,5 +18,12 @@
     <string name="notAvailable">N/A</string>
     <string name="accountExists">Found account</string>
     <string name="networkIsNotCompatible">Network is not compatible</string>
+    <string name="compatibleNetwork">Compatible network</string>
+    <string name="validCredentials">Valid credentials</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="connected">Connected</string>
+    <string name="alreadyConnected">Already connected</string>
+    <string name="invalidCredentials">Invalid credentials</string>
 
 </resources>
