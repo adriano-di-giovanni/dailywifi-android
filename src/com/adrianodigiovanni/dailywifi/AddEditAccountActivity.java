@@ -1,9 +1,9 @@
 package com.adrianodigiovanni.dailywifi;
 
-import com.adrianodigiovanni.app.AbstractPortraitActivity;
 import com.adrianodigiovanni.dailywifi.attempt.ActionType;
 import com.adrianodigiovanni.net.WifiHelper;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 // TODO: mostra password
 
-public class AddEditAccountActivity extends AbstractPortraitActivity {
+public class AddEditAccountActivity extends Activity {
 
 	private static final String TAG = "AddEditAccountActivity";
 
