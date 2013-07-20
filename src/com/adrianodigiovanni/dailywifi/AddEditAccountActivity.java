@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+// TODO: mostra password
+
 public class AddEditAccountActivity extends AbstractPortraitActivity {
 
 	private static final String TAG = "AddEditAccountActivity";
