@@ -23,5 +23,6 @@
     <string name="connected">Connesso</string>
     <string name="alreadyConnected">Già connesso</string>
     <string name="invalidCredentials">Credenziali non valide</string>
+    <string name="showPassword">Mostra password</string>
 
 </resources>

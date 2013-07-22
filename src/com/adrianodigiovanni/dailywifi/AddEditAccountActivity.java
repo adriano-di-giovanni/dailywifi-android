@@ -9,8 +9,10 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 // TODO: mostra password
@@ -58,6 +60,14 @@ public class AddEditAccountActivity extends Activity {
 		finish();
 	}
 
+	public void onShowPassword(View view) {
+		boolean isChecked = ((CheckBox) view).isChecked();
+		int inputType = InputType.TYPE_CLASS_TEXT
+				| ((isChecked) ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+						: InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		mEditTextPassword.setInputType(inputType);
+	}
+
 	public void onSave(View view) {
 
 		boolean hasErrors = false;
@@ -69,8 +79,8 @@ public class AddEditAccountActivity extends Activity {
 		Resources resources = getResources();
 
 		if (ssid.isEmpty()) {
-			mEditTextSSID.setError(resources
-					.getString(R.string.ssidIsRequired));
+			mEditTextSSID
+					.setError(resources.getString(R.string.ssidIsRequired));
 			hasErrors = true;
 		}
 

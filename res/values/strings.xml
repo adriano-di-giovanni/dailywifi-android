@@ -25,5 +25,6 @@
     <string name="connected">Connected</string>
     <string name="alreadyConnected">Already connected</string>
     <string name="invalidCredentials">Invalid credentials</string>
+    <string name="showPassword">Show password</string>
 
 </resources>
