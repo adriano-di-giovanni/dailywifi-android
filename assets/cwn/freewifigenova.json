@@ -1,0 +1,6 @@
+{
+	"api": {
+		"version": "1.0.0",
+		"entryPoint": "https://selfcare.freewifigenova.it:8081/api/v1"
+	}
+}

@@ -15,14 +15,17 @@
     <string name="passwordIsRequired">La password è richiesta</string>
     <string name="lastAccess">Ultimo accesso</string>
     <string name="notAvailable">N/D</string>
-    <string name="accountExists">Account trovato</string>
-    <string name="networkIsNotCompatible">Rete non compatibile</string>
+    <string name="accountExists">Connessione a %1s in corso&#8230;</string>
+    <string name="networkIsNotCompatible">%1s non è compatibile con DailyWiFi</string>
     <string name="yes">Sì</string>
     <string name="compatibleNetwork">Rete compatibile</string>
     <string name="validCredentials">Credenziali valide</string>
-    <string name="connected">Connesso</string>
-    <string name="alreadyConnected">Già connesso</string>
-    <string name="invalidCredentials">Credenziali non valide</string>
+    <string name="loggedIn">Connesso a %1s</string>
+    <string name="alreadyLoggedIn">Già connesso a %1s</string>
+    <string name="invalidCredentials">Username o password non validi per %1s</string>
     <string name="showPassword">Mostra password</string>
+    <string name="logout">Disconnetti</string>
+    <string name="loggedOut">Disconnesso da %1</string>
+    <string name="alreadyLoggedOut">Già disconnesso da %1</string>
 
 </resources>

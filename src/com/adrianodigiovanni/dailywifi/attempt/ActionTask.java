@@ -1,6 +1,9 @@
 package com.adrianodigiovanni.dailywifi.attempt;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -8,13 +11,15 @@ import javax.net.ssl.HttpsURLConnection;
 
 import com.adrianodigiovanni.dailywifi.Account;
 import com.adrianodigiovanni.dailywifi.R;
-import com.adrianodigiovanni.dailywifi.Toaster;
 import com.adrianodigiovanni.net.HttpURLConnectionHelper;
 import com.adrianodigiovanni.net.HttpsURLConnectionHelper;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class ActionTask extends
@@ -34,6 +39,7 @@ public class ActionTask extends
 	}
 
 	private ActionTaskParams mParams;
+	private int mNotificationId = 0;
 
 	@Override
 	protected Boolean doInBackground(ActionTaskParams... params) {
@@ -47,6 +53,7 @@ public class ActionTask extends
 		WifiInfo wifiInfo = mParams.getWifiInfo();
 
 		Account account;
+		String ssid;
 		URL responseURL;
 		DWFInfo dwfInfo;
 		URL actionTaskURL;
@@ -56,10 +63,11 @@ public class ActionTask extends
 		if (null != wifiInfo && null != wifiInfo.getSSID()
 				&& 0 != wifiInfo.getIpAddress()) {
 
-//			publishProgress(ActionProgress.ACTIVE_NETWORK_IS_WIFI);
+			// publishProgress(ActionProgress.ACTIVE_NETWORK_IS_WIFI);
 
-			account = Account.getBySSID(context,
-					wifiInfo.getSSID());
+			ssid = wifiInfo.getSSID();
+
+			account = Account.getBySSID(context, ssid);
 
 			if (null != account) {
 
@@ -73,9 +81,10 @@ public class ActionTask extends
 
 					account.setRedirectURL(responseURL);
 
-//					publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
+					// publishProgress(ActionProgress.ACTIVE_NETWORK_IS_CAPTIVE_AND_LOGGED_OUT);
 
-					dwfInfo = DWFInfo.fromRedirectURL(responseURL);
+					dwfInfo = DWFInfo.fromRedirectURL(responseURL, ssid,
+							context);
 
 					// network is dailywifi compatible
 					if (null != dwfInfo) {
@@ -114,6 +123,7 @@ public class ActionTask extends
 
 							break;
 						case LOGOUT:
+							publishProgress(ActionProgress.ALREADY_LOGGED_OUT);
 							break;
 						}
 					} else {
@@ -124,45 +134,48 @@ public class ActionTask extends
 
 					responseURL = account.getRedirectURL();
 
-					// if device is already logged in before account creation
-					if (null != responseURL) {
-						dwfInfo = DWFInfo.fromRedirectURL(account
-								.getRedirectURL());
+					// if device is logged in before account creation try to get
+					// info from the SSID
+					// TODO: create a task to recover information about wi fi
+					// network accounts with responseURL == null while device is
+					// online
+					// TODO: Ask Federico to verify logout API resource on FreeWiFiGenova
+					dwfInfo = (null != responseURL) ? DWFInfo.fromRedirectURL(
+							responseURL, ssid, context) : DWFInfo.fromSSID(
+							ssid, context);
 
-						// network is captive and dailywifi compatible and
-						// device is
-						// logged in
-						if (null != dwfInfo) {
+					if (null != dwfInfo) {
 
-							switch (actionType) {
-							case LOGIN:
-								publishProgress(ActionProgress.ALREADY_LOGGED_IN);
-								break;
-							case LOGOUT:
-								actionTaskURL = dwfInfo.getLogoutURL(account);
+						switch (actionType) {
+						case LOGIN:
+							publishProgress(ActionProgress.ALREADY_LOGGED_IN);
+							break;
+						case LOGOUT:
+							actionTaskURL = dwfInfo.getLogoutURL(account);
 
-								try {
+							try {
 
-									httpsURLConnection = HttpsURLConnectionHelper
-											.connectTo(actionTaskURL, "POST");
+								httpsURLConnection = HttpsURLConnectionHelper
+										.connectTo(actionTaskURL, "POST");
 
-									responseCode = httpsURLConnection
-											.getResponseCode();
+								responseCode = httpsURLConnection
+										.getResponseCode();
 
-									if (dwfInfo.isLoggedOut(responseCode)) {
-										publishProgress(ActionProgress.LOGGED_OUT);
-										result = true;
-									}
-								} catch (IOException e) {
-									// do nothing
-								} finally {
-									if (null != httpsURLConnection) {
-										httpsURLConnection.disconnect();
-									}
+								if (dwfInfo.isLoggedOut(responseCode)) {
+									publishProgress(ActionProgress.LOGGED_OUT);
+									result = true;
 								}
-								break;
+							} catch (IOException e) {
+								// do nothing
+							} finally {
+								if (null != httpsURLConnection) {
+									httpsURLConnection.disconnect();
+								}
 							}
+							break;
 						}
+					} else {
+						publishProgress(ActionProgress.ALREADY_LOGGED_IN);
 					}
 				}
 
@@ -178,33 +191,72 @@ public class ActionTask extends
 	protected void onProgressUpdate(ActionProgress... values) {
 		Context context = mParams.getContext();
 
-		Toaster toaster = Toaster.getInstance(context);
-
 		ActionProgress actionProgress = values[0];
-		String text;
+
+		String ssid = mParams.getWifiInfo().getSSID();
+
+		String contentTitle = context
+				.getString(context.getApplicationInfo().labelRes);
+		String contentText;
+		int priority = NotificationCompat.PRIORITY_DEFAULT;
+		int smallIcon = R.drawable.ic_stat_notify_app;
+		boolean indeterminate = true;
+		int defaults = 0;
 
 		switch (actionProgress) {
 		case ACCOUNT_EXISTS:
-			text = context.getString(R.string.accountExists);
+			mNotificationId++;
+			contentText = context.getString(R.string.accountExists, ssid);
 			break;
 		case ACTIVE_NETWORK_IS_NOT_COMPATIBLE:
-			text = context.getString(R.string.networkIsNotCompatible);
+			contentText = context.getString(R.string.networkIsNotCompatible,
+					ssid);
+			indeterminate = false;
 			break;
 		case CREDENTIALS_ARE_NOT_VALID:
-			text = context.getString(R.string.invalidCredentials);
+			contentText = context.getString(R.string.invalidCredentials, ssid);
+			priority = NotificationCompat.PRIORITY_MAX;
+			indeterminate = false;
+			defaults = Notification.DEFAULT_ALL;
 			break;
 		case LOGGED_IN:
-			text = context.getString(R.string.connected);
+			contentText = context.getString(R.string.loggedIn, ssid);
+			priority = NotificationCompat.PRIORITY_HIGH;
+			indeterminate = false;
+			defaults = Notification.DEFAULT_ALL;
 			break;
 		case ALREADY_LOGGED_IN:
-			text = context.getString(R.string.alreadyConnected);
+			contentText = context.getString(R.string.alreadyLoggedIn, ssid);
+			indeterminate = false;
+			break;
+		case LOGGED_OUT:
+			contentText = context.getString(R.string.loggedOut, ssid);
+			indeterminate = false;
+			break;
+		case ALREADY_LOGGED_OUT: 
+			contentText = context.getString(R.string.alreadyLoggedOut, ssid);
+			indeterminate = false;
 			break;
 		default:
-			text = actionProgress.toString();
+			contentText = actionProgress.toString();
 			break;
 		}
 
-		toaster.showToast(text);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(
+				context);
+
+		builder.setAutoCancel(true); // TODO: add intent
+		builder.setContentTitle(contentTitle);
+		builder.setContentText(contentText);
+		builder.setDefaults(defaults);
+		builder.setPriority(priority);
+		builder.setProgress(0, 0, indeterminate);
+		builder.setSmallIcon(smallIcon);
+
+		String serviceName = Context.NOTIFICATION_SERVICE;
+		NotificationManager notificationManager = (NotificationManager) context
+				.getSystemService(serviceName);
+		notificationManager.notify(mNotificationId, builder.build());
 	}
 
 	@Override

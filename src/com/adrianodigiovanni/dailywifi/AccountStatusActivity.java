@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.format.DateFormat;
@@ -15,12 +16,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.adrianodigiovanni.app.AbstractPortraitActivity;
+import com.adrianodigiovanni.dailywifi.attempt.ActionType;
+import com.adrianodigiovanni.net.WifiHelper;
 
 public class AccountStatusActivity extends AbstractPortraitActivity {
 	
 	private static final String TAG = "AccountStatusActivity";
 
 	private Uri mUri = null;
+	private Account mAccount = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +43,9 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 		}
 	}
 	
-	private void fill(Account account) {
+	private void fill() {
 		
-		Long lastUsed = account.getLastAccess();
+		Long lastUsed = mAccount.getLastAccess();
 		String formattedDate = getString(R.string.notAvailable);
 		
 		if (null != lastUsed) {
@@ -59,12 +63,12 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 		String text;
 		
 		textView = (TextView) findViewById(R.id.textViewSSID);
-		textView.setText(account.getSSID());
+		textView.setText(mAccount.getSSID());
 		
 		textView = (TextView) findViewById(R.id.textViewUsername);
-		textView.setText(account.getUsername());
+		textView.setText(mAccount.getUsername());
 		
-		strobe = account.getIsCompatible();
+		strobe = mAccount.getIsCompatible();
 		if (null != strobe) {
 			text = getString((strobe.booleanValue()) ? R.string.yes : R.string.no);
 		} else {
@@ -73,7 +77,7 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 		textView = (TextView) findViewById(R.id.textViewCompatible);
 		textView.setText(text);
 		
-		strobe = account.getIsValid();
+		strobe = mAccount.getIsValid();
 		if (null != strobe) {
 			text = getString((strobe.booleanValue()) ? R.string.yes : R.string.no);
 		} else {
@@ -89,8 +93,8 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Account account = Account.getByUri(this, mUri);
-		fill(account);
+		mAccount = Account.getByUri(this, mUri);
+		fill();
 	}
 	
 	@Override
@@ -119,5 +123,18 @@ public class AccountStatusActivity extends AbstractPortraitActivity {
 			Account.deleteByUri(this, mUri);
 		}
 		finish();
+	}
+	
+	public void onLogout(View view) {
+		WifiInfo wifiInfo = WifiHelper.getWifiInfo(this);
+		// Service must be started only if the edited account is for the
+		// same WiFi network the device is connected to
+		if (null != wifiInfo) {
+			String ssid = mAccount.getSSID();
+			String wifiInfoSSID = wifiInfo.getSSID();
+			if (null != wifiInfoSSID && wifiInfoSSID.equalsIgnoreCase(ssid)) {
+				BackgroundService.startSelf(this, ActionType.LOGOUT);
+			}
+		}
 	}
 }

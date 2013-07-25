@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import com.adrianodigiovanni.dailywifi.Account;
 import com.adrianodigiovanni.net.HttpsURLConnectionHelper;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
 /**
@@ -31,15 +33,19 @@ public class DWFInfo {
 
 	private String mApiVersion;
 	private String mApiEntryPoint;
-
+	
 	/**
 	 * Returns a DWFInfo object if network is DailyWiFi compatible.
 	 * 
 	 * @param redirectURL
 	 *            The response URL from {@link ActionTask}
+	 * @param fallbackSSID
+	 *            The SSID used to retrieve data from dailywifi.org if no
+	 *            dailywifi.json found at redirectURL. Introduces for testing
+	 *            purposes only
 	 * @return DWFInfo or @null if network is not DailyWiFi compatible.
 	 */
-	public static DWFInfo fromRedirectURL(URL redirectURL) {
+	public static DWFInfo fromRedirectURL(URL redirectURL, String fallbackSSID, Context context) {
 
 		DWFInfo dwfInfo = null;
 
@@ -47,6 +53,7 @@ public class DWFInfo {
 		HttpsURLConnection httpsURLConnection = null;
 		int responseCode;
 		String contentType;
+				
 		JSONObject jsonObject;
 		String apiVersion;
 		String apiEntryPoint;
@@ -78,6 +85,40 @@ public class DWFInfo {
 			if (null != httpsURLConnection) {
 				httpsURLConnection.disconnect();
 			}
+		}
+		
+		if (null == dwfInfo && null != fallbackSSID) {
+			dwfInfo = fromSSID(fallbackSSID, context);
+		}
+
+		return dwfInfo;
+	}
+	
+	public static DWFInfo fromSSID(String ssid, Context context) {
+		DWFInfo dwfInfo = null;
+		final String assetFilename = "cwn/" + ssid.toLowerCase() + ".json";
+		final AssetManager assetManager = context.getAssets();
+		InputStream assetInputStream;
+		JSONObject jsonObject = null;
+		String apiVersion;
+		String apiEntryPoint;
+		
+		try {
+			assetInputStream = assetManager.open(assetFilename);
+			
+			jsonObject = jsonFromStream(assetInputStream);
+			
+			if (null != jsonObject) {
+				apiVersion = getApiVersion(jsonObject);
+				if (null != apiVersion) {
+					apiEntryPoint = getApiEntryPoint(jsonObject);
+					if (null != apiEntryPoint) {
+						dwfInfo = new DWFInfo(apiVersion, apiEntryPoint);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// do nothing
 		}
 
 		return dwfInfo;
@@ -111,7 +152,6 @@ public class DWFInfo {
 
 			try {
 				url = new URL(mApiEntryPoint + slug);
-				Log.d(TAG, url.toString());
 			} catch (MalformedURLException e) {
 				// do nothing
 			}
@@ -119,34 +159,33 @@ public class DWFInfo {
 
 		return url;
 	}
-	
+
 	public URL getLogoutURL(Account account) {
-		
+
 		URL url = null;
 		String slug;
-		
+
 		if (null != account) {
-			
+
 			// TODO: handle API versions if needed
-			
+
 			slug = "account/logout?username=" + account.getUsername();
-			
+
 			try {
 				url = new URL(mApiEntryPoint + slug);
-				Log.d(TAG, url.toString());
 			} catch (MalformedURLException e) {
 				// do nothing
 			}
 		}
-		
+
 		return url;
 	}
-	
+
 	public boolean isLoggedIn(int responseCode) {
 		// TODO: handle API versions if needed
 		return HttpsURLConnection.HTTP_OK == responseCode;
 	}
-	
+
 	public boolean isLoggedOut(int responseCode) {
 		// TODO: handle API version if needed
 		return HttpsURLConnection.HTTP_OK == responseCode;
@@ -194,8 +233,6 @@ public class DWFInfo {
 		} catch (IOException e) {
 			// do nothing
 		}
-
-		Log.d(TAG, stringBuilder.toString());
 
 		try {
 			jsonObject = new JSONObject(stringBuilder.toString());

@@ -172,5 +172,31 @@
             android:textAppearance="?android:attr/textAppearance" >
         </TextView>
     </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/buttonLogout"
+        style="?android:attr/buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:onClick="onLogout" >
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_action_trash" >
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/logout"
+            android:textAppearance="?android:attr/textAppearance" >
+        </TextView>
+    </LinearLayout>
+    
 </LinearLayout>
