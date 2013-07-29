@@ -48,12 +48,15 @@ public class MainActivity extends AbstractPortraitFragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
+		Intent intent;
 		switch (itemId) {
 		case R.id.action_add:
-			Intent intent = new Intent(this,
-					AddEditAccountActivity.class);
+			intent = new Intent(this, AddEditAccountActivity.class);
 			startActivity(intent);
 			break;
+		case R.id.action_settings:
+			intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}

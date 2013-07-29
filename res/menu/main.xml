@@ -6,5 +6,11 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_action_add"
         android:title="@string/add"/>
-
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/settings"/>
+    
 </menu>

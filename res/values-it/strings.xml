@@ -2,6 +2,7 @@
 <resources>
 
     <string name="add">Aggiungi</string>
+    <string name="settings">Impostazioni</string>
     <string name="noAccounts">Nessun account</string>
     <string name="cancel">Annulla</string>
     <string name="save">Salva</string>
@@ -27,5 +28,7 @@
     <string name="logout">Disconnetti</string>
     <string name="loggedOut">Disconnesso da %1</string>
     <string name="alreadyLoggedOut">Già disconnesso da %1</string>
-
+    <string name="pref_enabled_title">Enable monitoring</string>
+    <string name="pref_enabled_summary">Allow DailyWiFi to join know captive Wi-fi networks.</string>
+    
 </resources>
